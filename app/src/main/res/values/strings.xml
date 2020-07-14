@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Habit Tracker</string>
+
+    <string name="db_name">appDatabase_2</string>
+
+    <string name="inkrementalne_service">InkrementalneService</string>
+    <string name="kategorije_service">KategorijeService</string>
+    <string name="kolicinske_service">KolicinskeService</string>
+    <string name="mjerne_jedinice_service">MjerneJediniceService</string>
+    <string name="osobine_service">OsobineService</string>
+    <string name="vremenske_service">VremenskeService</string>
+
+    <string name="all_services">allServices</string>
+
+    <string name="menu_pocetna">Početna stranica</string>
+    <string name="menu_postignuca">Postignuća</string>
+    <string name="menu_napomene">Napomene</string>
+    <string name="menu_postavke">Postavke</string>
+    <string name="menu_podijeli">Podijeli</string>
+    <string name="menu_kategorije">Kategorije</string>
+    <string name="menu_profil">Profil</string>
+
+    <string name="otvori">open</string>
+    <string name="zatvori">close</string>
+
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="dodaj">Dodaj</string>
+    <string name="ukloni">x</string>
+    <string name="start">Početak</string>
+    <string name="stop">Zaustavi</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="_6_00">6:00</string>
+</resources>

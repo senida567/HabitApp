@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/design_default_color_surface"
+    tools:context=".ui.categories.DodajAktivnostFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@+id/slika"
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        android:src="@drawable/activity_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="10dp"
+        />
+
+    <TextView
+        android:id="@+id/textview1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DODAJ NOVU AKTIVNOST"
+        android:textSize="20dp"
+        android:backgroundTintMode="src_over"
+        app:layout_constraintTop_toBottomOf="@+id/slika"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/naziv"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/textview1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:text="Naziv"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:gravity="center_horizontal" />
+
+    <EditText
+        android:id="@+id/editNaziv"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:textSize="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/textview1"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/kolicina"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Kolicina"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintTop_toBottomOf="@id/mjernaJedinica"
+        android:layout_marginTop="20dp"/>
+    <EditText
+        android:id="@+id/editKolicina"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/editMJ"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:textColor="#111111"
+        android:textSize="20dp"
+        />
+
+    <TextView
+        android:id="@+id/mjernaJedinica"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Mjerna\nJedinica"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/naziv"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
+
+    <EditText
+        android:id="@+id/editMJ"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/naziv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:textSize="20dp"
+        />
+
+
+    <TextView
+        android:id="@+id/broj"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Broj"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mjernaJedinica"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
+    <EditText
+        android:id="@+id/editBroj"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/editMJ"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:textSize="20dp"
+        />
+
+    <TextView
+        android:id="@+id/inkrement"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Inkrement"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mjernaJedinica"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
+    <EditText
+        android:id="@+id/editInkrement"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/mjernaJedinica"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:textColor="#111111"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:id="@+id/pocetak"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Pocetak"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/naziv"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
+    <EditText
+        android:id="@+id/editPocetak"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/naziv"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:textSize="20dp"
+        />
+
+
+    <TextView
+        android:id="@+id/kraj"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="Kraj"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pocetak"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"/>
+    <EditText
+        android:id="@+id/editKraj"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/editPocetak"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:textSize="20dp"
+        android:layout_marginEnd="10dp" />
+
+    <Button
+        android:id="@+id/novaAktivnost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="DODAJ"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="50dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
