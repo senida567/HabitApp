@@ -1,5 +1,6 @@
 package com.example.projekat.ui.home
 
+import android.content.ContentValues
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
@@ -12,22 +13,29 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
+import com.example.projekat.adapter.AktivnostiAdapter
+import com.example.projekat.adapter.InkrementalneAdapter
 import com.example.projekat.entity.Inkrementalne
+import com.example.projekat.entity.Kategorije
 import com.example.projekat.entity.Kolicinske
 import com.example.projekat.entity.Vremenske
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.kategorije_fragment.*
+import kotlinx.coroutines.launch
 
-class PocetnaFragment : Fragment(), View.OnClickListener {
+class PocetnaFragment : Fragment() {
 
     lateinit private var inkrementalneList : List<Inkrementalne>
     lateinit private var kolicinskeList : List<Kolicinske>
     lateinit private var vremenskeList : List<Vremenske>
+    private lateinit var kategorije: Kategorije
 
     lateinit private var recyclerView : RecyclerView
     //lateinit private var inkrementalneAdapter : InkrementalneAdapter
@@ -39,22 +47,20 @@ class PocetnaFragment : Fragment(), View.OnClickListener {
     lateinit var dugmePlus : Button
     lateinit var dugmeMinus : Button
     lateinit var dugmeUkloni : Button
-/*
-    var akt = arrayOf(
-        "akt1", "akt2", "akt3",
-        "akt4", "akt5", "akt6", "akt7"
-    )
 
-    lateinit var adapter: ArrayAdapter<String>
-    lateinit var listView: ListView
-    lateinit var alertDialog: AlertDialog.Builder*/
     lateinit var dialog: AlertDialog
+    lateinit var odabraneAktivnosti : ArrayList<Int>  // u ovu listu smjestam aktivnosti iz alert dialoga koje korisnik odabere za dodavanje na pocetnu stranicu
 
     companion object {
         fun newInstance() = PocetnaFragment()
     }
 
     private lateinit var viewModel: PocetnaViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        retainInstance = true
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,7 +102,29 @@ class PocetnaFragment : Fragment(), View.OnClickListener {
         viewModel = ViewModelProviders.of(this).get(PocetnaViewModel::class.java)
         // TODO: Use the ViewModel
 
-        //setUpMyRecyclerView()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // RecyclerView node initialized here
+
+        // setUpMyRecyclerView je suspend funkcija pa mora biti pozvana iz korutine
+        // zato koristim sljedeci coroutine builder
+        lifecycleScope.launch {
+            setUpMyRecyclerView()
+        }
+/*
+        recyclerView.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            layoutManager = LinearLayoutManager(activity)
+            // set the custom adapter to the RecyclerView
+            adapter = AktivnostiAdapter(
+                kategorije, inkrementalneList, kolicinskeList,
+                vremenskeList, this@PocetnaFragment
+            )
+        }
+*/
     }
 
     private fun povecajInkrement(view: View) {
@@ -114,40 +142,44 @@ class PocetnaFragment : Fragment(), View.OnClickListener {
     private fun dodajAktivnost(view : View) {
         /* todo: korisniku se prikaze lista vec postojecih aktivnosti u bazi
         *   aktivnost koju odabere se dodaje na pocetnu stranicu */
-  /*      alertDialog = context?.let { AlertDialog.Builder(it) }!!
-        val rowList: View = layoutInflater.inflate(R.layout.dodaj_aktivnost_element, null)
-        listView = rowList.findViewById(R.id.aktivnost_element)
-        adapter = context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, akt) }!!
-        listView.adapter = adapter
-        adapter.notifyDataSetChanged()
-        alertDialog.setView(rowList)
-        dialog = alertDialog.create()
-        dialog.show()*/
+
+        odabraneAktivnosti = ArrayList<Int>()
+
         val builder = context?.let { AlertDialog.Builder(it) }
         if (builder != null) {
             builder.setTitle("Odaberite aktivnost")
         }
 
         // dodajemo checkbox listu
+        // trebam dodati listAdapter pomocu kojeg cu u dialogu prikazati aktivnosti iz baze
         val aktivnosti = arrayOf("akt1", "akt2", "akt3", "akt4", "akt5")
-        val checkedItems = booleanArrayOf(true, false, false, true, false)
+        val checkedItems = null
         if (builder != null) {
             builder.setMultiChoiceItems(aktivnosti, checkedItems) { dialog, which, isChecked ->
-                // user checked or unchecked a box
+                // ako je data aktivnost bila checkirana pa je korisnik uncheckirao box
+                // onda uklanjam tu aktivnost iz liste
+                if (odabraneAktivnosti.contains(which)) {
+                    odabraneAktivnosti.remove(Integer.valueOf(which))
+                }
+                else {
+                    // ako je korisnik checkirao box, odgovarajucu aktivnost dodajem u listu odabraneAktivnosti
+                    odabraneAktivnosti.add(which)
+                }
             }
         }
 
-        // add OK and Cancel buttons
+        // dodajem OK i cancel dugmad
         if (builder != null) {
             builder.setPositiveButton("OK") { dialog, which ->
                 // user clicked OK
             }
         }
+
         if (builder != null) {
             builder.setNegativeButton("Cancel", null)
         }
 
-// create and show the alert dialog
+        // create and show the alert dialog
         val dialog = builder?.create()
         if (dialog != null) {
             dialog.show()
@@ -164,7 +196,7 @@ class PocetnaFragment : Fragment(), View.OnClickListener {
         *   ne uklanja se iz baze */
     }
 
-    private suspend fun setUpMyRecyclerView() {
+    open suspend fun setUpMyRecyclerView() {
 
         /*if (db?.inkrementalneDao()?.getAll()!!.isEmpty() ||
             db?.kolicinskeDao()?.getAll()!!.isEmpty() ||
@@ -183,21 +215,21 @@ class PocetnaFragment : Fragment(), View.OnClickListener {
             appDatabase!!.getVremenskeService()?.saveOrUpdate(aktivnost_3)
         }*/
 
-        inkrementalneList = db!!.inkrementalneDao()?.getAll() as List<Inkrementalne>
-        kolicinskeList = db!!.kolicinskeDao()?.getAll() as List<Kolicinske>
-        vremenskeList = db!!.vremenskeDao()?.getAll() as List<Vremenske>
+        inkrementalneList = db?.inkrementalneDao()?.getAll()!!
+        vremenskeList = db?.vremenskeDao()?.getAll()!!
+        kolicinskeList = db?.kolicinskeDao()?.getAll()!!
 
-       // recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
-
+        recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = InkrementalneAdapter(inkrementalneList)
         //inkrementalneAdapter = InkrementalneAdapter(inkrementalneList)
         // todo: uraditi i za vremenske i kolicinske aktivnosti
 
-        //recyclerView.adapter = inkrementalneAdapter
-        //recyclerView.layoutManager = LinearLayoutManager(context)
     }
-
-    override fun onClick(v: View?) {
-        print("nestooo")
+/*
+    override fun onElementClick(position: Int) {
+        TODO("Not yet implemented")
+        Log.d(ContentValues.TAG, "onElementClick: " + position)
     }
-
+*/
 }
