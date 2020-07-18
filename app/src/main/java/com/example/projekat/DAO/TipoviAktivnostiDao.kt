@@ -29,4 +29,7 @@ interface TipoviAktivnostiDao {
 
     @Query("SELECT id FROM tipoviAktivnosti ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
+
+    @Query("SELECT * FROM tipoviAktivnosti WHERE id = :id_TA")
+    suspend fun getById(id_TA : Int) : TipoviAktivnosti
 }

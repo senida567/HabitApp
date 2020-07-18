@@ -30,4 +30,7 @@ interface KategorijeDao {
 
     @Query("SELECT id FROM kategorije ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
+
+    @Query("SELECT * FROM kategorije WHERE id = :id_K")
+    suspend fun getById(id_K : Int) : List<Kategorije>
 }

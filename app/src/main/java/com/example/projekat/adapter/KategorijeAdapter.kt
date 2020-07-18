@@ -1,5 +1,6 @@
 package com.example.projekat.adapter
 
+import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,14 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.entity.Kategorije
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable.cancel
+import kotlinx.coroutines.launch
 
 
-class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: OnElementListener) : RecyclerView.Adapter<KategorijeAdapter.KategorijeViewHolder>() {
+class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOnElementListener: OnElementListener) :
+    RecyclerView.Adapter<KategorijeAdapter.KategorijeViewHolder>() {
 
     private var kategorijeLista: List<Kategorije>
-    private lateinit var mOnElementListener : OnElementListener
+    //private var tipoviAktivnostiLista : List<TipoviAktivnosti>
+    private var mOnElementListener : OnElementListener
+    private var db : AppDatabase
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -27,19 +36,13 @@ class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: O
 
     override fun onBindViewHolder(holder: KategorijeViewHolder, position: Int) {
         val kategorije : Kategorije = kategorijeLista.get(position)
-        holder.naziv.setText(kategorije.naziv)
-
-        /*val osob : List<Osobine>? = GlavnaAktivnost.appDatabase?.getOsobineDao()?.getAll()
-        var tekst = ""
-        if(osob != null) {
-            for(o : Osobine in osob) {
-                if(o.id_kategorije == kategorije.id) {
-                    tekst += " ! "
-                    tekst += o.opis
-                }
-            }
+        holder.naziv.text = kategorije.naziv
+        holder.osobina.text = kategorije.osobina
+        CoroutineScope(Dispatchers.Default).launch {
+            holder.tip.text = db.tipoviAktivnostiDao().getById(kategorije.tip).naziv
         }
-        holder.osobina.setText(tekst)*/
+
+
     }
 
     override fun getItemCount(): Int {
@@ -47,8 +50,9 @@ class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: O
     }
 
     class KategorijeViewHolder(itemView: View, onElementListener: OnElementListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        var naziv: TextView
-        var osobina: TextView
+        var naziv : TextView
+        var tip : TextView
+        var osobina : TextView
         var mOnElementListener: OnElementListener
 
         override fun onClick(view: View) {
@@ -58,6 +62,7 @@ class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: O
 
         init {
             naziv = itemView.findViewById(R.id.naziv)
+            tip = itemView.findViewById(R.id.tip)
             osobina = itemView.findViewById(R.id.osobina)
             mOnElementListener = onElementListener
             itemView.setOnClickListener(this)
@@ -71,6 +76,7 @@ class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: O
     init {
         this.kategorijeLista = kategorijeLista
         this.mOnElementListener = mOnElementListener
+        this.db = db
     }
 
 

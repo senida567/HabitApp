@@ -15,32 +15,33 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RestrictTo
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.adapter.AktivnostiAdapter
 import com.example.projekat.entity.*
 import kotlinx.android.synthetic.main.kategorije_fragment.recyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Appendable
+import kotlin.coroutines.coroutineContext
 
-class AktivnostiFragment(kategorije: Kategorije) : Fragment(), AktivnostiAdapter.OnElementListener {
+class AktivnostiFragment(kategorije: Kategorije, db : AppDatabase) : Fragment(), AktivnostiAdapter.OnElementListener {
 
-    private lateinit var inkrementalneAktivnostiList: List<Inkrementalne>
-    private lateinit var vremenskeAktivnostiList: List<Vremenske>
-    private lateinit var kolicinskeAktivnostiList: List<Kolicinske>
-    private lateinit var listaAktivnosti: List<List<String>>
+    private lateinit var listaAktivnosti: List<Aktivnosti>
     private var kategorije: Kategorije
+    private var db : AppDatabase
 
     private lateinit var btnIzbrisi: Button
-    private lateinit var btnDodajI: Button
-    private lateinit var btnDodajK: Button
-    private lateinit var btnDodajV: Button
-    private var brojKlikova = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-
     }
 
     override fun onCreateView(
@@ -54,10 +55,7 @@ class AktivnostiFragment(kategorije: Kategorije) : Fragment(), AktivnostiAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // RecyclerView node initialized here
-
-        lifecycleScope.launch {
-            popuniListe()
-        }
+        popuniListe()
         postaviNazive()
 
         recyclerView.apply {
@@ -66,8 +64,7 @@ class AktivnostiFragment(kategorije: Kategorije) : Fragment(), AktivnostiAdapter
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
             adapter = AktivnostiAdapter(
-                kategorije, inkrementalneAktivnostiList, kolicinskeAktivnostiList,
-                vremenskeAktivnostiList, this@AktivnostiFragment
+                kategorije, listaAktivnosti, this@AktivnostiFragment
             )
         }
 
@@ -76,47 +73,18 @@ class AktivnostiFragment(kategorije: Kategorije) : Fragment(), AktivnostiAdapter
             // izbrisiKategoriju()
         }
 
-        btnDodajI = view.findViewById(R.id.dodajAktivnostInkrementalna)
-        btnDodajI.setOnClickListener {
-            dodajAktivnost("inkrementalna")
-        }
-        btnDodajK = view.findViewById(R.id.dodajAktivnostKolicinska)
-        btnDodajK.setOnClickListener {
-            dodajAktivnost("kolicinska")
-        }
-        btnDodajV = view.findViewById(R.id.dodajAktivnostVremenska)
-        btnDodajV.setOnClickListener {
-            dodajAktivnost("vremenska")
-        }
-
-    }
-
-    companion object {
-        fun newInstance(): KategorijeFragment = KategorijeFragment()
     }
 
     init {
         this.kategorije = kategorije
+        this.db = db
     }
 
-    open suspend fun popuniListe() {
-        inkrementalneAktivnostiList = db?.inkrementalneDao()?.getAll()!!
-        vremenskeAktivnostiList = db?.vremenskeDao()?.getAll()!!
-        kolicinskeAktivnostiList = db?.kolicinskeDao()?.getAll()!!
-
-        /* var brojAktivnosti = inkrementalneAktivnostiList.size + vremenskeAktivnostiList.size + kolicinskeAktivnostiList.size
-        var i = 0
-        var j = 0
-        while (brojAktivnosti > 0) {
-            while(j < inkrementalneAktivnostiList.size) {
-                var lista : List<String> = listOf("inkrementalne",inkrementalneAktivnostiList.get(i).naziv,
-                    inkrementalneAktivnostiList.get(i).)
-                listaAktivnosti.toMutableList().add(i, lista)
-                j++
-            }
-            brojAktivnosti--
-            i++
-        }*/
+    fun popuniListe() {
+        CoroutineScope(Dispatchers.Default).launch {
+            listaAktivnosti = db.aktivnostiDao().getById_K(kategorije.id)
+            Log.d(TAG, "popuniListe: ")
+        }
     }
 
     open fun postaviNazive() {

@@ -30,4 +30,7 @@ interface MjerneJediniceDao {
 
     @Query("SELECT id FROM mjerneJedinice ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
+
+    @Query("SELECT * FROM mjerneJedinice WHERE id = :id_MJ")
+    suspend fun getById(id_MJ : Int) : List<MjerneJedinice>
 }
