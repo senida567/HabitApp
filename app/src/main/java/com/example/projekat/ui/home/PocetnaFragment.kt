@@ -28,25 +28,26 @@ import com.example.projekat.entity.Kolicinske
 import com.example.projekat.entity.Vremenske
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.kategorije_fragment.*
+import kotlinx.android.synthetic.main.pocetna_fragment.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PocetnaFragment : Fragment() {
 
-    lateinit private var inkrementalneList : List<Inkrementalne>
-    lateinit private var kolicinskeList : List<Kolicinske>
-    lateinit private var vremenskeList : List<Vremenske>
-    private lateinit var kategorije: Kategorije
+    private lateinit var inkrementalneList : List<Inkrementalne>
+    private lateinit var kolicinskeList : List<Kolicinske>
+    private lateinit var vremenskeList : List<Vremenske>
 
-    lateinit private var recyclerView : RecyclerView
+   // lateinit private var recyclerView : RecyclerView
     //lateinit private var inkrementalneAdapter : InkrementalneAdapter
     // todo: lateinit private var vremenskeAdapter : VremenskeAdapter
     // todo: lateinit private var kolicinskeAdapter : KolicinskeAdapter
 
     lateinit var fabPocetna : FloatingActionButton
-    lateinit var dugmeUnos : Button
+   /* lateinit var dugmeUnos : Button
     lateinit var dugmePlus : Button
     lateinit var dugmeMinus : Button
-    lateinit var dugmeUkloni : Button
+    lateinit var dugmeUkloni : Button*/
 
     lateinit var dialog: AlertDialog
     lateinit var odabraneAktivnosti : ArrayList<Int>  // u ovu listu smjestam aktivnosti iz alert dialoga koje korisnik odabere za dodavanje na pocetnu stranicu
@@ -55,7 +56,7 @@ class PocetnaFragment : Fragment() {
         fun newInstance() = PocetnaFragment()
     }
 
-    private lateinit var viewModel: PocetnaViewModel
+  //  private lateinit var viewModel: PocetnaViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +66,31 @@ class PocetnaFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view : View = inflater.inflate(R.layout.pocetna_fragment, container, false)
+    ): View?  = inflater.inflate(R.layout.pocetna_fragment, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // RecyclerView node initialized here
+
+        // setUpMyRecyclerView je suspend funkcija pa mora biti pozvana iz korutine
+        // zato koristim sljedeci coroutine builder
+        lifecycleScope.launch {
+            dodajListe()
+        }
+/*
+        recyclerViewPocetna.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            //layoutManager = LinearLayoutManager(activity)
+            // set the custom adapter to the RecyclerView
+            /*adapter = AktivnostiAdapter(
+                kategorije, inkrementalneList, kolicinskeList,
+                vremenskeList, this@PocetnaFragment
+            )*/
+            // recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
+            layoutManager = LinearLayoutManager(activity)
+            adapter = InkrementalneAdapter(inkrementalneList)
+        }*/
 
         fabPocetna = view.findViewById(R.id.fabPocetna)
 /*        dugmePlus = view.findViewById(R.id.plus_btn)
@@ -93,38 +117,34 @@ class PocetnaFragment : Fragment() {
         fabPocetna.setOnClickListener {
             dodajAktivnost(view)
         }
-
-        return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
+ /*   override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(PocetnaViewModel::class.java)
-        // TODO: Use the ViewModel
 
+        lifecycleScope.launch {
+            dodajListe()
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // RecyclerView node initialized here
+  */
 
-        // setUpMyRecyclerView je suspend funkcija pa mora biti pozvana iz korutine
-        // zato koristim sljedeci coroutine builder
-        lifecycleScope.launch {
-            setUpMyRecyclerView()
+    private suspend fun dodajListe() {
+        Log.d(ContentValues.TAG, "INICIJALIZACIJA LISTI")
+        if (db?.inkrementalneDao()?.getAll() != null) {
+            inkrementalneList = db?.inkrementalneDao()?.getAll()!!
         }
-/*
-        recyclerView.apply {
-            // set a LinearLayoutManager to handle Android
-            // RecyclerView behavior
-            layoutManager = LinearLayoutManager(activity)
-            // set the custom adapter to the RecyclerView
-            adapter = AktivnostiAdapter(
-                kategorije, inkrementalneList, kolicinskeList,
-                vremenskeList, this@PocetnaFragment
-            )
+
+        if (db?.vremenskeDao()?.getAll() != null) {
+            vremenskeList = db?.vremenskeDao()?.getAll()!!
         }
-*/
+
+        if (db?.kolicinskeDao()?.getAll() != null) {
+            kolicinskeList = db?.kolicinskeDao()?.getAll()!!
+        }
+        //inkrementalneList = db?.inkrementalneDao()?.getAll()!!
+        //vremenskeList = db?.vremenskeDao()?.getAll()!!
+        //kolicinskeList = db?.kolicinskeDao()?.getAll()!!
     }
 
     private fun povecajInkrement(view: View) {
@@ -196,7 +216,7 @@ class PocetnaFragment : Fragment() {
         *   ne uklanja se iz baze */
     }
 
-    open suspend fun setUpMyRecyclerView() {
+    private suspend fun setUpMyRecyclerView() {
 
         /*if (db?.inkrementalneDao()?.getAll()!!.isEmpty() ||
             db?.kolicinskeDao()?.getAll()!!.isEmpty() ||
@@ -215,13 +235,9 @@ class PocetnaFragment : Fragment() {
             appDatabase!!.getVremenskeService()?.saveOrUpdate(aktivnost_3)
         }*/
 
-        inkrementalneList = db?.inkrementalneDao()?.getAll()!!
-        vremenskeList = db?.vremenskeDao()?.getAll()!!
-        kolicinskeList = db?.kolicinskeDao()?.getAll()!!
-
-        recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
+    /*    recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = InkrementalneAdapter(inkrementalneList)
+        recyclerView.adapter = InkrementalneAdapter(inkrementalneList)*/
         //inkrementalneAdapter = InkrementalneAdapter(inkrementalneList)
         // todo: uraditi i za vremenske i kolicinske aktivnosti
 
