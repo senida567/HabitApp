@@ -31,4 +31,10 @@ interface AktivnostiDao {
     @Query("SELECT id FROM aktivnosti ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
 
+    @Query("SELECT * FROM aktivnosti WHERE id = :id_A")
+    suspend fun getById(id_A : Int) : List<Aktivnosti>
+
+    @Query("SELECT * FROM aktivnosti WHERE id_kategorije = :id_K")
+    suspend fun getById_K(id_K : Int) : List<Aktivnosti>
+
 }

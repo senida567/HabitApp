@@ -30,4 +30,7 @@ interface InkrementalneDao {
 
     @Query("SELECT id FROM inkrementalne ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
+
+    @Query("SELECT * FROM inkrementalne WHERE id = :id_I")
+    suspend fun getById(id_I : Int) : List<Inkrementalne>
 }

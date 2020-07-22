@@ -44,7 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        //Kreiranje i pocetni upisi u bazu
+        //Kreiranje
         //private
         fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, java.lang.String.valueOf(R.string.db_name))

@@ -30,4 +30,7 @@ interface KolicinskeDao {
 
     @Query("SELECT id FROM kolicinske ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
+
+    @Query("SELECT * FROM kolicinske WHERE id = :id_K")
+    suspend fun getById(id_K : Int) : List<Kolicinske>
 }

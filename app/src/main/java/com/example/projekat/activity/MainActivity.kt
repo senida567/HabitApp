@@ -14,8 +14,10 @@ import com.example.projekat.AppDatabase
 import com.example.projekat.PodaciZaBazu
 import com.example.projekat.R
 import com.example.projekat.entity.Kategorije
+import com.example.projekat.entity.TipoviAktivnosti
 import com.example.projekat.ui.achievements.PostignucaFragment
 import com.example.projekat.ui.categories.DodajKategorijuFragment
+import com.example.projekat.ui.categories.KategorijeFragment
 import com.example.projekat.ui.home.PocetnaFragment
 import com.example.projekat.ui.notes.NapomeneFragment
 import com.example.projekat.ui.profile.ProfilFragment
@@ -23,7 +25,8 @@ import com.example.projekat.ui.settings.PostavkeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.kategorije_fragment.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -33,7 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer : DrawerLayout
     private lateinit var bottomNavView: BottomNavigationView
 
-    private lateinit var kategorijeList: List<Kategorije>
+    lateinit var kategorijeList: List<Kategorije>
 
     companion object {
         var db : AppDatabase? = null
@@ -60,10 +63,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         db = AppDatabase.getInstance(this) //ApplicationContext)
 
         //kad koristimo suspend funkcije moramo imati ovaj scope
-        lifecycleScope.launch {
-            if (db.aktivnostiDao().getAll() == null)
+        CoroutineScope(Dispatchers.Main).launch {
+            if (db.aktivnostiDao().getAll().isEmpty())
                 PodaciZaBazu(db).onCreate()
+            Log.d("NESTO ", "onCreate: " + db.tipoviAktivnostiDao().getById(3))
+            kategorijeList = db.kategorijeDao().getAll()
+            //tipoviAktivnostiList = db.tipoviAktivnostiDao().getAll()
         }
+
     }
 
     private fun loadFragment(fragment : Fragment){
@@ -145,7 +152,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.bottom_kategorije -> {
                     title = "Kategorije"
-                    //loadFragment(KategorijeFragment())
+                    loadFragment(KategorijeFragment(db, kategorijeList))
                 }
                 R.id.bottom_profil -> {
                     title = "Profil"
@@ -157,7 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onPointerCaptureChanged(hasCapture: Boolean) {}
 
-    open fun floatingActionButtonClicked() {
+    fun floatingActionButtonClicked() {
         if(bottomNavView.selectedItemId == R.id.bottom_kategorije)  {
             loadFragment(DodajKategorijuFragment())
         }else if(bottomNavView.selectedItemId == R.id.bottom_profil)  {
@@ -166,4 +173,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             //TO_DO
         }
     }
+
+    fun getDB() : AppDatabase { return this.db }
 }
