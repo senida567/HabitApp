@@ -20,6 +20,8 @@
     <string name="menu_kategorije">Kategorije</string>
     <string name="menu_profil">Profil</string>
 
+    <string name="naziv_aktivnosti">Naziv</string>
+
     <string name="otvori">open</string>
     <string name="zatvori">close</string>
 

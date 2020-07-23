@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.projekat.AppDatabase
 import com.example.projekat.PodaciZaBazu
 import com.example.projekat.R
+import com.example.projekat.entity.Aktivnosti
 import com.example.projekat.entity.Kategorije
 import com.example.projekat.entity.TipoviAktivnosti
 import com.example.projekat.ui.achievements.PostignucaFragment
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var bottomNavView: BottomNavigationView
 
     lateinit var kategorijeList: List<Kategorije>
+    lateinit var aktivnostiList: List<Aktivnosti>
 
     companion object {
         var db : AppDatabase? = null
@@ -57,8 +59,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // sinhronizujem toggle tako da zna kad treba prebaciti na hamburger a kad na back ikonu
         drawerToggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        loadFragment(PocetnaFragment());
-        navigation_view.setNavigationItemSelectedListener(this)
 
         db = AppDatabase.getInstance(this) //ApplicationContext)
 
@@ -68,8 +68,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 PodaciZaBazu(db).onCreate()
             Log.d("NESTO ", "onCreate: " + db.tipoviAktivnostiDao().getById(3))
             kategorijeList = db.kategorijeDao().getAll()
+            aktivnostiList = db.aktivnostiDao().getAll()
             //tipoviAktivnostiList = db.tipoviAktivnostiDao().getAll()
         }
+
+        // zbog toga sto se ovaj coroutineScope izvrsava poslije ucitavanja fragmenta pocetnog
+        // lista aktivnostiList ostane neinicijalizirana
+        //loadFragment(PocetnaFragment(db, aktivnostiList))
+        // zasad nek se neki drugi fragment kojem ne treba baza ucitava na pocetku
+        loadFragment(NapomeneFragment())
+        navigation_view.setNavigationItemSelectedListener(this)
 
     }
 
@@ -108,7 +116,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (menuItem.itemId) {
             R.id.nav_pocetna -> {
                 title = "Početna stranica"
-                loadFragment(PocetnaFragment())
+                loadFragment(PocetnaFragment(db, aktivnostiList))
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
@@ -132,7 +140,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_podijeli -> {
                 title = "Podijeli"
-                loadFragment(PocetnaFragment())
+                loadFragment(PostavkeFragment())
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
@@ -148,7 +156,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (item.itemId) {
                 R.id.bottom_pocetna -> {
                     title = "Početna stranica"
-                    loadFragment(PocetnaFragment())
+                    loadFragment(PocetnaFragment(db, aktivnostiList))
                 }
                 R.id.bottom_kategorije -> {
                     title = "Kategorije"

@@ -22,21 +22,26 @@ import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.adapter.AktivnostiAdapter
 import com.example.projekat.adapter.InkrementalneAdapter
-import com.example.projekat.entity.Inkrementalne
-import com.example.projekat.entity.Kategorije
-import com.example.projekat.entity.Kolicinske
-import com.example.projekat.entity.Vremenske
+import com.example.projekat.adapter.PocetneAktivnostiAdapter
+import com.example.projekat.entity.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.kategorije_fragment.*
 import kotlinx.android.synthetic.main.pocetna_fragment.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class PocetnaFragment : Fragment() {
+class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fragment(), AktivnostiAdapter.OnElementListener {
 
+    private var db : AppDatabase
+    // iz ove liste aktivnosti mi treba samo nekoliko elemeneta koje cu proslijediti adapteru
+    private var listaAktivnosti : List<Aktivnosti>
     private lateinit var inkrementalneList : List<Inkrementalne>
     private lateinit var kolicinskeList : List<Kolicinske>
     private lateinit var vremenskeList : List<Vremenske>
+    //private lateinit var listaAktivnosti: List<Aktivnosti>
+    //private lateinit var listaAktivnosti: List<Any>
 
    // lateinit private var recyclerView : RecyclerView
     //lateinit private var inkrementalneAdapter : InkrementalneAdapter
@@ -52,8 +57,9 @@ class PocetnaFragment : Fragment() {
     lateinit var dialog: AlertDialog
     lateinit var odabraneAktivnosti : ArrayList<Int>  // u ovu listu smjestam aktivnosti iz alert dialoga koje korisnik odabere za dodavanje na pocetnu stranicu
 
-    companion object {
-        fun newInstance() = PocetnaFragment()
+    init {
+        this.db = db
+        this.listaAktivnosti = listaAktivnosti
     }
 
   //  private lateinit var viewModel: PocetnaViewModel
@@ -72,25 +78,31 @@ class PocetnaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // RecyclerView node initialized here
 
-        // setUpMyRecyclerView je suspend funkcija pa mora biti pozvana iz korutine
-        // zato koristim sljedeci coroutine builder
-        lifecycleScope.launch {
-            dodajListe()
-        }
+        dodajListe()
 /*
+        CoroutineScope(Dispatchers.Default).launch {
+            // 1) da probam da li je problem u ovim listama inkrementalne vrem i kol, tj da li se one uopce inicijalizuju ili je do ove liste
+            // proslijedit cu neku bezveze kreiranu listu adapteru da mogu provjeriti za ove druge liste s tipovima
+            // ** problem je ipak sto se ova listaAktivnosti inicijalizira kasnije nego recyclerView
+            //listaAktivnosti = listOf("String1", 4, "str2")
+            //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
+        }*/
+
+        // 2) izvan ovog coroutineScope bloka se inicijalizira na vrijeme, ali ova probna lista s bezveze elementima
+        // lista s pravim elementima se ne moze inicijalizirati jer inkrementalneList i ostale dvije liste se inicijaliziraju
+        // poslije ovog dijela
+        //listaAktivnosti = listOf("String1", 4, "str2")
+        //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
+
+
         recyclerViewPocetna.apply {
             // set a LinearLayoutManager to handle Android
             // RecyclerView behavior
-            //layoutManager = LinearLayoutManager(activity)
-            // set the custom adapter to the RecyclerView
-            /*adapter = AktivnostiAdapter(
-                kategorije, inkrementalneList, kolicinskeList,
-                vremenskeList, this@PocetnaFragment
-            )*/
-            // recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
             layoutManager = LinearLayoutManager(activity)
-            adapter = InkrementalneAdapter(inkrementalneList)
-        }*/
+            // set the custom adapter to the RecyclerView
+            // listaAktivnosti.slice(0..3) - uzima prvi tri elementa iz liste
+            adapter = PocetneAktivnostiAdapter(listaAktivnosti, this@PocetnaFragment)
+        }
 
         fabPocetna = view.findViewById(R.id.fabPocetna)
 /*        dugmePlus = view.findViewById(R.id.plus_btn)
@@ -129,22 +141,21 @@ class PocetnaFragment : Fragment() {
 
   */
 
-    private suspend fun dodajListe() {
+    private fun dodajListe() {
         Log.d(ContentValues.TAG, "INICIJALIZACIJA LISTI")
-        if (db?.inkrementalneDao()?.getAll() != null) {
-            inkrementalneList = db?.inkrementalneDao()?.getAll()!!
+        CoroutineScope(Dispatchers.Default).launch {
+            inkrementalneList = db.inkrementalneDao().getAll()
+            vremenskeList = db.vremenskeDao().getAll()
+            kolicinskeList = db.kolicinskeDao().getAll()
+            listaAktivnosti = db.aktivnostiDao().getAll()
         }
 
-        if (db?.vremenskeDao()?.getAll() != null) {
-            vremenskeList = db?.vremenskeDao()?.getAll()!!
-        }
+        // lista sadrzi po jedan element(tj prvu aktivnost) od svakog tipa aktivnosti
+        /*CoroutineScope(Dispatchers.Default).launch {
+            listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
+        }*/
 
-        if (db?.kolicinskeDao()?.getAll() != null) {
-            kolicinskeList = db?.kolicinskeDao()?.getAll()!!
-        }
-        //inkrementalneList = db?.inkrementalneDao()?.getAll()!!
-        //vremenskeList = db?.vremenskeDao()?.getAll()!!
-        //kolicinskeList = db?.kolicinskeDao()?.getAll()!!
+        //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
     }
 
     private fun povecajInkrement(view: View) {
@@ -242,10 +253,9 @@ class PocetnaFragment : Fragment() {
         // todo: uraditi i za vremenske i kolicinske aktivnosti
 
     }
-/*
+
     override fun onElementClick(position: Int) {
         TODO("Not yet implemented")
         Log.d(ContentValues.TAG, "onElementClick: " + position)
     }
-*/
 }
