@@ -32,5 +32,8 @@ interface MjerneJediniceDao {
     suspend fun getLastId() : Int
 
     @Query("SELECT * FROM mjerneJedinice WHERE id = :id_MJ")
-    suspend fun getById(id_MJ : Int) : List<MjerneJedinice>
+    suspend fun getById(id_MJ : Int) : MjerneJedinice
+
+    @Query("SELECT naziv FROM mjerneJedinice WHERE id_aktivnosti = :id")
+    fun getByIdAktivnosti(id : Int) : String
 }

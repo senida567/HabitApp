@@ -1,12 +1,15 @@
 package com.example.projekat.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.projekat.DAO.InkrementalneDao
 import com.example.projekat.R
+import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.entity.Aktivnosti
 import com.example.projekat.entity.Inkrementalne
 import com.example.projekat.entity.Kolicinske
@@ -67,6 +70,8 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         return listaAktivnosti.size
     }
 
+    /* The method onBindViewHolder(…) will take a data collection and apply a rotating rendering
+    of visible data applied to those ViewHolders. */
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val element = listaAktivnosti[position]
         when (holder) {
@@ -111,7 +116,12 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         }
 
         override fun bind(aktivnost: Aktivnosti) {
-            TODO("Not yet implemented")
+            nazivAktivnosti.text = aktivnost.naziv
+            // todo: mjernu jedinicu mi ne prikazuje
+            mjernaJedinica.text =
+                db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id) // mjernu jedinicu mozemo dobiti po id-u aktivnosti
+            //unos.text = "0"
+            // holder.unos.text = // ne mogu aktivnosti u bazi imati samo one kolone, treba jos dodati kolonu za sve varijable tj sve sto se pojavi u tom redu
         }
     }
 
@@ -130,7 +140,9 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         }
 
         override fun bind(aktivnost: Aktivnosti) {
-            TODO("Not yet implemented")
+            nazivAktivnosti.text = aktivnost.naziv
+            mjernaJedinica.text =
+                db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
         }
     }
 
@@ -146,21 +158,14 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
             startStop = itemView.findViewById(R.id.start_stop_btn) // imaju samo vremenske aktivnosti
         }
         override fun bind(aktivnost: Aktivnosti) {
-            TODO("Not yet implemented")
+            nazivAktivnosti.text = aktivnost.naziv
         }
     }
 
     /*
-    /* The method onBindViewHolder(…) will take a data collection and apply a rotating rendering
-    of visible data applied to those ViewHolders. */
     override fun onBindViewHolder(holder: PocetneAktivnostiViewHolder, position: Int) {
         val aktivnost : Aktivnosti = listaAktivnosti.get(0)
-        /* Trebam napraviti if uslove:
-          ako je aktivnost tipa inkrementalna onda inicijalizirati varijable za nju
-          ako je aktivnost tipa kolicinska onda inicijalizirati varijable za nju
-          ako je aktivnost tipa vremenska onda inicijalizirati varijable za nju */
         holder.nazivAktivnosti.text = aktivnost.naziv
-        // ovdje inicijalizirati ostale varijable koje imaju svi tipovi aktivnosti
         // holder.unos.text = // ne mogu aktivnosti u bazi imati samo one kolone, treba jos dodati kolonu za sve varijable tj sve sto se pojavi u tom redu
 
         // provjera tipa aktivnosti
@@ -169,13 +174,6 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         CoroutineScope(Dispatchers.Default).launch {
             holder.tipAktivnosti = db?.tipoviAktivnostiDao()?.getById(aktivnost.id)?.naziv.toString() // mozda ce praviti problem safe call-ovi
         }
-
-        // ako je tip aktivnosti inkrementalne:
-
-        // ako je tip aktivnosti vremenske:
-
-        // ako je tip aktivnosti kolicinske:
-
     }
 
     class PocetneAktivnostiViewHolder(itemView: View, onElementListener: AktivnostiAdapter.OnElementListener):

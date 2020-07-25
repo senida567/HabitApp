@@ -28,6 +28,7 @@ class PodaciZaBazu(db : AppDatabase){
 
             db.aktivnostiDao().insert(Aktivnosti(1, "Jutarnje trčanje", 1))
             db.vremenskeDao().insert(Vremenske(1, 1, "", ""))
+            db.mjerneJediniceDao().insert(MjerneJedinice(2, "min", 1))
 
             db.aktivnostiDao().insert(Aktivnosti(2, "Unos kalorija", 2))
             db.kolicinskeDao().insert(Kolicinske(1, 2, 200))
