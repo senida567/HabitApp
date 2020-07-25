@@ -1,19 +1,14 @@
 package com.example.projekat.ui.home
 
 import android.content.ContentValues
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -32,16 +27,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fragment(), AktivnostiAdapter.OnElementListener {
+class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, listaTipovaAktivnosti: List<String>) : Fragment(), AktivnostiAdapter.OnElementListener {
 
     private var db : AppDatabase
     // iz ove liste aktivnosti mi treba samo nekoliko elemeneta koje cu proslijediti adapteru
     private var listaAktivnosti : List<Aktivnosti>
+    private var listaTipovaAktivnosti : List<String>
     private lateinit var inkrementalneList : List<Inkrementalne>
     private lateinit var kolicinskeList : List<Kolicinske>
     private lateinit var vremenskeList : List<Vremenske>
-    //private lateinit var listaAktivnosti: List<Aktivnosti>
-    //private lateinit var listaAktivnosti: List<Any>
 
    // lateinit private var recyclerView : RecyclerView
     //lateinit private var inkrementalneAdapter : InkrementalneAdapter
@@ -60,6 +54,7 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
     init {
         this.db = db
         this.listaAktivnosti = listaAktivnosti
+        this.listaTipovaAktivnosti = listaTipovaAktivnosti
     }
 
   //  private lateinit var viewModel: PocetnaViewModel
@@ -101,7 +96,7 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
             // listaAktivnosti.slice(0..3) - uzima prvi tri elementa iz liste
-            adapter = PocetneAktivnostiAdapter(listaAktivnosti, this@PocetnaFragment)
+            adapter = PocetneAktivnostiAdapter(listaAktivnosti, listaTipovaAktivnosti, this@PocetnaFragment)
         }
 
         fabPocetna = view.findViewById(R.id.fabPocetna)
@@ -147,7 +142,7 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             inkrementalneList = db.inkrementalneDao().getAll()
             vremenskeList = db.vremenskeDao().getAll()
             kolicinskeList = db.kolicinskeDao().getAll()
-            listaAktivnosti = db.aktivnostiDao().getAll()
+            //listaAktivnosti = db.aktivnostiDao().getAll()
         }
 
         // lista sadrzi po jedan element(tj prvu aktivnost) od svakog tipa aktivnosti

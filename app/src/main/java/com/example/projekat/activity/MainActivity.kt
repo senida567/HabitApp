@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var kategorijeList: List<Kategorije>
     lateinit var aktivnostiList: List<Aktivnosti>
+    var listaTipovaAktivnosti: ArrayList<String> = arrayListOf()
 
     companion object {
         var db : AppDatabase? = null
@@ -69,6 +70,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Log.d("NESTO ", "onCreate: " + db.tipoviAktivnostiDao().getById(3))
             kategorijeList = db.kategorijeDao().getAll()
             aktivnostiList = db.aktivnostiDao().getAll()
+
+            /*for (x in 0..2) {
+                // ovo ce biti lista stringova
+                listaTipovaAktivnosti.add(db.tipoviAktivnostiDao().getById(aktivnostiList[x].id).naziv)
+            }*/
+            for (el in aktivnostiList) {
+                // ovo ce biti lista stringova
+                listaTipovaAktivnosti.add(db.tipoviAktivnostiDao().getById(el.id).naziv)
+            }
             //tipoviAktivnostiList = db.tipoviAktivnostiDao().getAll()
         }
 
@@ -116,7 +126,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (menuItem.itemId) {
             R.id.nav_pocetna -> {
                 title = "Početna stranica"
-                loadFragment(PocetnaFragment(db, aktivnostiList))
+                loadFragment(PocetnaFragment(db, aktivnostiList, listaTipovaAktivnosti))
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
@@ -156,7 +166,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (item.itemId) {
                 R.id.bottom_pocetna -> {
                     title = "Početna stranica"
-                    loadFragment(PocetnaFragment(db, aktivnostiList))
+                    loadFragment(PocetnaFragment(db, aktivnostiList, listaTipovaAktivnosti))
                 }
                 R.id.bottom_kategorije -> {
                     title = "Kategorije"
