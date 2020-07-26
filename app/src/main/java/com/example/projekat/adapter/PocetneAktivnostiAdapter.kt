@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.projekat.AppDatabase
 import com.example.projekat.DAO.InkrementalneDao
 import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
@@ -16,18 +17,16 @@ import com.example.projekat.entity.Kolicinske
 import com.example.projekat.entity.Vremenske
 import com.example.projekat.ui.home.PocetnaFragment
 
-class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: List<String>, mOnElementListener: AktivnostiAdapter.OnElementListener)
+class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: List<String>)
     : RecyclerView.Adapter<PocetneAktivnostiAdapter.BaseViewHolder>() {
 
     private var listaAktivnosti : List<Aktivnosti>
     // iz main-a prosljedjujem i listu tipova aktivnosti tako da se element u listaAktivnosti
     // i njegov tip u listaTipovaAktivnosti nalaze na istom indeksu u listama
     private var listaTipovaAktivnosti : List<String>
-    private var mOnElementListener : AktivnostiAdapter.OnElementListener
 
     init {
         this.listaAktivnosti = listaAktivnosti
-        this.mOnElementListener = mOnElementListener
         this.listaTipovaAktivnosti = listaTipova
     }
 
@@ -108,20 +107,39 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         var minusDugme : Button
 
         init {
-            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna) // ovo ima svaki tip aktivnosti
-            unos = itemView.findViewById(R.id.unos_pocetna) // ovo ima svaki tip aktivnosti
-            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna) // ovo nemaju vremenske aktivnosti
+            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_inkrementalna) // ovo ima svaki tip aktivnosti
+            unos = itemView.findViewById(R.id.unos_pocetna_inkrementalna) // ovo ima svaki tip aktivnosti
+            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna_inkrementalna) // ovo nemaju vremenske aktivnosti
             plusDugme = itemView.findViewById(R.id.plus_btn) // imaju samo inkrementalne aktivnosti
             minusDugme = itemView.findViewById(R.id.minus_btn) // imaju samo inkrementalne aktivnosti
         }
 
         override fun bind(aktivnost: Aktivnosti) {
+            // broj i inkrement mozda trebaju unutar setonclicklistenera
+            val broj = db?.inkrementalneDao()?.getBrojByIdAktivnosti(aktivnost.id)
+            val inkrement = db?.inkrementalneDao()?.getInkrementByIdAktivnosti(aktivnost.id)
+
             nazivAktivnosti.text = aktivnost.naziv
             // todo: mjernu jedinicu mi ne prikazuje
             mjernaJedinica.text =
                 db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id) // mjernu jedinicu mozemo dobiti po id-u aktivnosti
-            //unos.text = "0"
-            // holder.unos.text = // ne mogu aktivnosti u bazi imati samo one kolone, treba jos dodati kolonu za sve varijable tj sve sto se pojavi u tom redu
+             unos.text = broj.toString()
+
+            plusDugme.setOnClickListener {
+                // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
+                // za taj inkrement treba povecati broj
+                if (broj != null) {
+                    db?.inkrementalneDao()?.updateBroj(broj + inkrement!!, aktivnost.id)
+                }
+            }
+
+            minusDugme.setOnClickListener {
+                // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
+                // za taj inkrement treba umanjiti broj
+                if (broj != null) {
+                    db?.inkrementalneDao()?.updateBroj(broj - inkrement!!, aktivnost.id)
+                }
+            }
         }
     }
 
@@ -133,9 +151,9 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         var dodajUnos : Button
 
         init {
-            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna) // ovo ima svaki tip aktivnosti
-            unos = itemView.findViewById(R.id.unos_pocetna) // ovo ima svaki tip aktivnosti
-            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna) // ovo nemaju vremenske aktivnosti
+            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_kolicinska) // ovo ima svaki tip aktivnosti
+            unos = itemView.findViewById(R.id.unos_pocetna_kolicinska) // ovo ima svaki tip aktivnosti
+            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna_kolicinska) // ovo nemaju vremenske aktivnosti
             dodajUnos = itemView.findViewById(R.id.unos_btn) // ovo imaju samo kolicinske aktivnosti
         }
 
@@ -143,6 +161,7 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
             nazivAktivnosti.text = aktivnost.naziv
             mjernaJedinica.text =
                 db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
+            unos.text = db?.kolicinskeDao()?.getKolicinaById(aktivnost.id).toString()
         }
     }
 
@@ -153,53 +172,31 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
         var startStop : Button
 
         init {
-            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna) // ovo ima svaki tip aktivnosti
-            unos = itemView.findViewById(R.id.unos_pocetna) // ovo ima svaki tip aktivnosti
+            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_vremenska) // ovo ima svaki tip aktivnosti
+            unos = itemView.findViewById(R.id.unos_pocetna_vremenska) // ovo ima svaki tip aktivnosti
             startStop = itemView.findViewById(R.id.start_stop_btn) // imaju samo vremenske aktivnosti
         }
         override fun bind(aktivnost: Aktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
         }
     }
-
-    /*
-    override fun onBindViewHolder(holder: PocetneAktivnostiViewHolder, position: Int) {
-        val aktivnost : Aktivnosti = listaAktivnosti.get(0)
-        holder.nazivAktivnosti.text = aktivnost.naziv
-        // holder.unos.text = // ne mogu aktivnosti u bazi imati samo one kolone, treba jos dodati kolonu za sve varijable tj sve sto se pojavi u tom redu
-
-        // provjera tipa aktivnosti
-        //var tipAktivnosti : String
-        // todo: kako preko Aktivnosti dobiti tip aktivnosti
-        CoroutineScope(Dispatchers.Default).launch {
-            holder.tipAktivnosti = db?.tipoviAktivnostiDao()?.getById(aktivnost.id)?.naziv.toString() // mozda ce praviti problem safe call-ovi
-        }
+/*
+    fun postaviListener(listener: MojClickListener) {
+        this.listener = listener
     }
 
+    interface MojClickListener {
+        fun povecajInkrement(aktivnost : Inkrementalne)
+        fun smanjiInkrement(aktivnost : Inkrementalne)
+        fun dodajUnos(aktivnost : Kolicinske)
+    }*/
+/*
     class PocetneAktivnostiViewHolder(itemView: View, onElementListener: AktivnostiAdapter.OnElementListener):
         RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-        var nazivAktivnosti : TextView
-        lateinit var tipAktivnosti : String
-        var unos : TextView
-        var mjernaJedinica : TextView
-        var ukloniAktivnost : Button
-        var startStop : Button
-        var dodajUnos : Button
-        var plusDugme : Button
-        var minusDugme : Button
         var mOnElementListener: AktivnostiAdapter.OnElementListener
 
         init {
-
-            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna) // ovo ima svaki tip aktivnosti
-            unos = itemView.findViewById(R.id.unos_pocetna) // ovo ima svaki tip aktivnosti
-            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna) // ovo nemaju vremenske aktivnosti
-            ukloniAktivnost = itemView.findViewById(R.id.ukloni_aktivnost) // ovo ima svaki tip aktivnosti
-            startStop = itemView.findViewById(R.id.start_stop_btn) // imaju samo vremenske aktivnosti
-            dodajUnos = itemView.findViewById(R.id.unos_btn) // ovo imaju samo kolicinske aktivnosti
-            plusDugme = itemView.findViewById(R.id.plus_btn) // imaju samo inkrementalne aktivnosti
-            minusDugme = itemView.findViewById(R.id.minus_btn) // imaju samo inkrementalne aktivnosti
             mOnElementListener = onElementListener
             itemView.setOnClickListener(this)
         }

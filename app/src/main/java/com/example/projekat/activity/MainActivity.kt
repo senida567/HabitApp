@@ -69,10 +69,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             kategorijeList = db.kategorijeDao().getAll()
             aktivnostiList = db.aktivnostiDao().getAll()
 
-            /*for (x in 0..2) {
-                // ovo ce biti lista stringova
-                listaTipovaAktivnosti.add(db.tipoviAktivnostiDao().getById(aktivnostiList[x].id).naziv)
-            }*/
             for (el in aktivnostiList) {
                 // ovo ce biti lista stringova
                 listaTipovaAktivnosti.add(db.tipoviAktivnostiDao().getById(el.id).naziv)

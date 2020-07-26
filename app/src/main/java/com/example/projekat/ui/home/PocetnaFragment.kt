@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, listaTipovaAktivnosti: List<String>) : Fragment(), AktivnostiAdapter.OnElementListener {
+class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, listaTipovaAktivnosti: List<String>) : Fragment() {
 
     private var db : AppDatabase
     // iz ove liste aktivnosti mi treba samo nekoliko elemeneta koje cu proslijediti adapteru
@@ -31,16 +32,11 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, lista
     private lateinit var kolicinskeList : List<Kolicinske>
     private lateinit var vremenskeList : List<Vremenske>
 
-   // lateinit private var recyclerView : RecyclerView
     //lateinit private var inkrementalneAdapter : InkrementalneAdapter
     // todo: lateinit private var vremenskeAdapter : VremenskeAdapter
     // todo: lateinit private var kolicinskeAdapter : KolicinskeAdapter
 
     lateinit var fabPocetna : FloatingActionButton
-   /* lateinit var dugmeUnos : Button
-    lateinit var dugmePlus : Button
-    lateinit var dugmeMinus : Button
-    lateinit var dugmeUkloni : Button*/
 
     lateinit var dialog: AlertDialog
     lateinit var odabraneAktivnosti : ArrayList<Int>  // u ovu listu smjestam aktivnosti iz alert dialoga koje korisnik odabere za dodavanje na pocetnu stranicu
@@ -68,21 +64,6 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, lista
         // RecyclerView node initialized here
 
         dodajListe()
-/*
-        CoroutineScope(Dispatchers.Default).launch {
-            // 1) da probam da li je problem u ovim listama inkrementalne vrem i kol, tj da li se one uopce inicijalizuju ili je do ove liste
-            // proslijedit cu neku bezveze kreiranu listu adapteru da mogu provjeriti za ove druge liste s tipovima
-            // ** problem je ipak sto se ova listaAktivnosti inicijalizira kasnije nego recyclerView
-            //listaAktivnosti = listOf("String1", 4, "str2")
-            //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
-        }*/
-
-        // 2) izvan ovog coroutineScope bloka se inicijalizira na vrijeme, ali ova probna lista s bezveze elementima
-        // lista s pravim elementima se ne moze inicijalizirati jer inkrementalneList i ostale dvije liste se inicijaliziraju
-        // poslije ovog dijela
-        //listaAktivnosti = listOf("String1", 4, "str2")
-        //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
-
 
         recyclerViewPocetna.apply {
             // set a LinearLayoutManager to handle Android
@@ -90,45 +71,15 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, lista
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
             // listaAktivnosti.slice(0..3) - uzima prvi tri elementa iz liste
-            adapter = PocetneAktivnostiAdapter(listaAktivnosti, listaTipovaAktivnosti, this@PocetnaFragment)
+            adapter = PocetneAktivnostiAdapter(listaAktivnosti, listaTipovaAktivnosti)
         }
 
         fabPocetna = view.findViewById(R.id.fabPocetna)
-/*        dugmePlus = view.findViewById(R.id.plus_btn)
-        dugmeMinus = view.findViewById(R.id.minus_btn)
-        dugmeUnos = view.findViewById(R.id.unos_btn)
-        dugmeUkloni = view.findViewById(R.id.ukloni_aktivnost)
-
-        dugmePlus.setOnClickListener {
-            povecajInkrement(view)
-        }
-
-        dugmeMinus.setOnClickListener {
-            smanjiInkrement(view)
-        }
-
-        dugmeUnos.setOnClickListener {
-            dodajUnos(view)
-        }
-
-        dugmeUkloni.setOnClickListener {
-            ukloniAktivnost(view)
-        }*/
 
         fabPocetna.setOnClickListener {
             dodajAktivnost(view)
         }
     }
-
- /*   override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        lifecycleScope.launch {
-            dodajListe()
-        }
-    }
-
-  */
 
     private fun dodajListe() {
         Log.d(ContentValues.TAG, "INICIJALIZACIJA LISTI")
@@ -136,26 +87,20 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, lista
             inkrementalneList = db.inkrementalneDao().getAll()
             vremenskeList = db.vremenskeDao().getAll()
             kolicinskeList = db.kolicinskeDao().getAll()
-            //listaAktivnosti = db.aktivnostiDao().getAll()
         }
-
-        // lista sadrzi po jedan element(tj prvu aktivnost) od svakog tipa aktivnosti
-        /*CoroutineScope(Dispatchers.Default).launch {
-            listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
-        }*/
-
-        //listaAktivnosti = listOf(inkrementalneList.first(), vremenskeList.first(), kolicinskeList.first())
     }
 
-    private fun povecajInkrement(view: View) {
-
+    fun povecajInkrement(aktivnost: Inkrementalne) {
+        // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
+        // za taj inkrement treba povecati broj
+        aktivnost.broj += aktivnost.inkrement
     }
 
-    private fun smanjiInkrement(view: View) {
-
+    fun smanjiInkrement(aktivnost: Inkrementalne) {
+        aktivnost.broj -= aktivnost.inkrement
     }
 
-    private fun dodajUnos(view : View) {
+    fun dodajUnos(aktivnost : Kolicinske) {
 
     }
 
@@ -214,37 +159,5 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, lista
     private fun ukloniAktivnost(view : View) {
         /* todo: odgovarajuca aktivnost se uklanja s pocetne strane
         *   ne uklanja se iz baze */
-    }
-
-    private suspend fun setUpMyRecyclerView() {
-
-        /*if (db?.inkrementalneDao()?.getAll()!!.isEmpty() ||
-            db?.kolicinskeDao()?.getAll()!!.isEmpty() ||
-            db?.vremenskeDao()?.getAll()!!.isEmpty()) {
-
-            val aktivnost_1 : Inkrementalne =
-                Inkrementalne(0,"Voda", 0, 1, 1, 0)
-            appDatabase!!.getInkrementalneService()?.saveOrUpdate(aktivnost_1)
-
-            val aktivnost_2 : Kolicinske =
-                Kolicinske(0, "Kalorije", 1400, 2, 1)
-            appDatabase!!.getKolicinskeService()?.saveOrUpdate(aktivnost_2)
-
-            val aktivnost_3 : Vremenske =
-                Vremenske(0, "Trčanje", "start", "stop", 3)
-            appDatabase!!.getVremenskeService()?.saveOrUpdate(aktivnost_3)
-        }*/
-
-    /*    recyclerView = getView()?.findViewById(R.id.recyclerViewPocetna)!!
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = InkrementalneAdapter(inkrementalneList)*/
-        //inkrementalneAdapter = InkrementalneAdapter(inkrementalneList)
-        // todo: uraditi i za vremenske i kolicinske aktivnosti
-
-    }
-
-    override fun onElementClick(position: Int) {
-        TODO("Not yet implemented")
-        Log.d(ContentValues.TAG, "onElementClick: " + position)
     }
 }

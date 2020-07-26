@@ -1,7 +1,6 @@
 package com.example.projekat.DAO
 
 import androidx.room.*
-import com.example.projekat.entity.Kolicinske
 import com.example.projekat.entity.MjerneJedinice
 import com.example.projekat.entity.TipoviAktivnosti
 
@@ -30,12 +29,11 @@ interface MjerneJediniceDao {
     suspend fun update(mjerneJedinice: MjerneJedinice?)
 
     @Query("SELECT id FROM mjerneJedinice ORDER BY id DESC LIMIT 1")
-    fun getLastId() : Int
+    suspend fun getLastId() : Int
 
     @Query("SELECT * FROM mjerneJedinice WHERE id = :id_MJ")
     suspend fun getById(id_MJ : Int) : MjerneJedinice
 
-    @Query("SELECT naziv FROM mjerneJedinice WHERE id_aktivnosti = :id")
-    fun getByIdAktivnosti(id : Int) : String
-
+    @Query("SELECT naziv FROM mjerneJedinice WHERE id_aktivnosti = :id_MJ")
+    fun getByIdAktivnosti(id_MJ : Int) : String
 }
