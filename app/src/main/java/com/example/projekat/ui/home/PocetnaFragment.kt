@@ -10,21 +10,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
-import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.adapter.AktivnostiAdapter
-import com.example.projekat.adapter.InkrementalneAdapter
 import com.example.projekat.adapter.PocetneAktivnostiAdapter
 import com.example.projekat.entity.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.kategorije_fragment.*
 import kotlinx.android.synthetic.main.pocetna_fragment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>, listaTipovaAktivnosti: List<String>) : Fragment(), AktivnostiAdapter.OnElementListener {

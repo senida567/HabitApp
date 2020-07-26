@@ -2,34 +2,76 @@ package com.example.projekat.ui.categories
 
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.fragment.app.Fragment
+
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.fragment.app.Fragment
+import com.example.projekat.AppDatabase
 import com.example.projekat.R
-import com.example.projekat.adapter.KategorijeAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import android.widget.ArrayAdapter
+import androidx.fragment.app.FragmentTransaction
+import com.example.projekat.activity.MainActivity
 import com.example.projekat.entity.Kategorije
-import kotlinx.android.synthetic.main.fragment_dodaj_kategoriju.*
+import kotlin.coroutines.CoroutineContext
 
+class DodajKategorijuFragment(db : AppDatabase) : Fragment(), CoroutineScope {
+    private var job: Job = Job()
 
-class DodajKategorijuFragment : Fragment() {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     private lateinit var btn : Button
+    private var db : AppDatabase
+    private var onItemSelected = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-
     }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_dodaj_kategoriju, container, false)
+                              savedInstanceState: Bundle?): View {
+
+        var view = inflater.inflate(R.layout.fragment_dodaj_kategoriju, container, false)
+
+        val spinner = view.findViewById<Spinner>(R.id.tip)
+        val l : List<String> = db.tipoviAktivnostiDao().getAllNaziv()
+
+        if (spinner != null) {
+                spinner.adapter = ArrayAdapter(
+                    requireActivity(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    l
+                )
+            }
+
+            spinner.onItemSelectedListener = object :
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>,
+                                            view: View, position: Int, id: Long) {
+                    onItemSelected = position
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // write code to perform some action
+                }
+            }
+        return view
+
+    }
 
     // populate the views now that the layout has been inflated
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,38 +80,34 @@ class DodajKategorijuFragment : Fragment() {
         btn = view.findViewById(R.id.novaKategorija)
         btn.setOnClickListener {
 
-            /*   var naziv = view.findViewById<EditText>(R.id.naziv).getText().toString()
-            var osob = view.findViewById<EditText>(R.id.osobina).getText().toString()
+            val naziv = view.findViewById<EditText>(R.id.naziv).text.toString()
+            val osobina = view.findViewById<EditText>(R.id.osobina).text.toString()
+            val tip = view.findViewById<Spinner>(R.id.tip).toString()
             if(TextUtils.isEmpty(naziv)) {
-
                 Toast.makeText(requireActivity(), "Unesite naziv kategorije!", Toast.LENGTH_LONG).show();
-                return@setOnClickListener;
-
+                return@setOnClickListener
+            } else if(TextUtils.isEmpty(tip)) {
+                Toast.makeText(requireActivity(), "Odaberite tip!", Toast.LENGTH_LONG).show();
+                return@setOnClickListener
             } else {
-
-                var db = GlavnaAktivnost.appDatabase
-                var broj = db?.getKategorijeDao()?.getLastId()
-                var lastId: Int
-                if (broj != null) lastId = broj + 1
-                else lastId = 1
-
-                var novaKategorija = Kategorije(lastId, naziv, 2, osob != "")
-                db?.getKategorijeService()?.saveOrUpdate(novaKategorija)
-
-                if(osob != "") {
-                    broj = db?.getOsobineDao()?.getLastId()
-                    if (broj != null) lastId = broj + 1
-                    else lastId = 1
-                    db?.getOsobineService()?.saveOrUpdate(Osobine(lastId, osob, novaKategorija.id))
+                val novaKat = Kategorije(db.kategorijeDao().getLastId()+1, naziv, onItemSelected+1, osobina)
+                launch {
+                    db.kategorijeDao().insert(novaKat)
+                    Toast.makeText(requireActivity(), "DODANA NOVA!", Toast.LENGTH_LONG).show()
+                    dodanaNova()
                 }
-
-                var fr = getFragmentManager()?.beginTransaction()
-                fr?.replace(R.id.fragment_container, KategorijeFragment())
-                fr?.addToBackStack(null)
-                fr?.commit()
             }
         }
-*/
-        }
+    }
+
+    fun dodanaNova() {
+        var fr = getFragmentManager()?.beginTransaction()
+        fr?.replace(R.id.fragment_container, KategorijeFragment(db))
+        fr?.addToBackStack(null)
+        fr?.commit()
+    }
+
+    init {
+        this.db = db
     }
 }

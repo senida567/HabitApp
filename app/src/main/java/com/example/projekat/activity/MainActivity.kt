@@ -9,13 +9,11 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.lifecycleScope
 import com.example.projekat.AppDatabase
 import com.example.projekat.PodaciZaBazu
 import com.example.projekat.R
 import com.example.projekat.entity.Aktivnosti
 import com.example.projekat.entity.Kategorije
-import com.example.projekat.entity.TipoviAktivnosti
 import com.example.projekat.ui.achievements.PostignucaFragment
 import com.example.projekat.ui.categories.DodajKategorijuFragment
 import com.example.projekat.ui.categories.KategorijeFragment
@@ -170,7 +168,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.bottom_kategorije -> {
                     title = "Kategorije"
-                    loadFragment(KategorijeFragment(db, kategorijeList))
+                    loadFragment(KategorijeFragment(db))
                 }
                 R.id.bottom_profil -> {
                     title = "Profil"
@@ -184,7 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun floatingActionButtonClicked() {
         if(bottomNavView.selectedItemId == R.id.bottom_kategorije)  {
-            loadFragment(DodajKategorijuFragment())
+            loadFragment(DodajKategorijuFragment(db))
         }else if(bottomNavView.selectedItemId == R.id.bottom_profil)  {
             //TO_DO:
         }else if(bottomNavView.selectedItemId == R.id.bottom_pocetna) {

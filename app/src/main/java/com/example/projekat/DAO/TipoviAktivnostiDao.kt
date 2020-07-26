@@ -6,6 +6,7 @@ import com.example.projekat.entity.TipoviAktivnosti
 @Dao
 interface TipoviAktivnostiDao {
 
+
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -31,5 +32,11 @@ interface TipoviAktivnostiDao {
     suspend fun getLastId() : Int
 
     @Query("SELECT * FROM tipoviAktivnosti WHERE id = :id_TA")
-    suspend fun getById(id_TA : Int) : TipoviAktivnosti
+    fun getById(id_TA : Int) : TipoviAktivnosti
+
+    @Query("SELECT naziv FROM tipoviAktivnosti")
+    fun getAllNaziv() : List<String>
+
+    @Query("SELECT naziv FROM tipoviAktivnosti WHERE id = :id")
+    fun getNazivById(id : Int) : String
 }

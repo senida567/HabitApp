@@ -21,7 +21,6 @@ class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOn
     RecyclerView.Adapter<KategorijeAdapter.KategorijeViewHolder>() {
 
     private var kategorijeLista: List<Kategorije>
-    //private var tipoviAktivnostiLista : List<TipoviAktivnosti>
     private var mOnElementListener : OnElementListener
     private var db : AppDatabase
 
@@ -38,11 +37,7 @@ class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOn
         val kategorije : Kategorije = kategorijeLista.get(position)
         holder.naziv.text = kategorije.naziv
         holder.osobina.text = kategorije.osobina
-        CoroutineScope(Dispatchers.Default).launch {
-            holder.tip.text = db.tipoviAktivnostiDao().getById(kategorije.tip).naziv
-        }
-
-
+        holder.tip.text = db.tipoviAktivnostiDao().getById(kategorije.tip).naziv
     }
 
     override fun getItemCount(): Int {

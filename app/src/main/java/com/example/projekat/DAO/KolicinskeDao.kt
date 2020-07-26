@@ -29,8 +29,11 @@ interface KolicinskeDao {
     suspend fun update(kolicinske: Kolicinske?)
 
     @Query("SELECT id FROM kolicinske ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM kolicinske WHERE id = :id_K")
     suspend fun getById(id_K : Int) : List<Kolicinske>
+
+    @Query("SELECT * FROM kolicinske WHERE id_aktivnosti = :id")
+    fun getByIdAktivnosti(id : Int) : Kolicinske
 }

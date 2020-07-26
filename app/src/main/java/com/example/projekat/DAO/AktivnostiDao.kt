@@ -17,24 +17,24 @@ interface AktivnostiDao {
     suspend fun insertOrUpdate(aktivnosti: Aktivnosti)
 
     @Query("SELECT * FROM aktivnosti")
-    suspend fun getAll() : List<Aktivnosti>
+    fun getAll() : List<Aktivnosti>
 
     @Query("DELETE FROM aktivnosti")
     suspend fun deleteAll()
 
     @Query("DELETE FROM aktivnosti WHERE id = :id_A")
-    suspend fun deleteId(id_A : Int)
+    fun deleteId(id_A : Int)
 
     @Update
     suspend fun update(aktivnosti: Aktivnosti?)
 
     @Query("SELECT id FROM aktivnosti ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM aktivnosti WHERE id = :id_A")
-    suspend fun getById(id_A : Int) : List<Aktivnosti>
+    fun getById(id_A : Int) : List<Aktivnosti>
 
     @Query("SELECT * FROM aktivnosti WHERE id_kategorije = :id_K")
-    suspend fun getById_K(id_K : Int) : List<Aktivnosti>
+    fun getById_K(id_K : Int) : List<Aktivnosti>
 
 }

@@ -7,6 +7,7 @@ import com.example.projekat.entity.TipoviAktivnosti
 @Dao
 interface KategorijeDao {
 
+
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -17,20 +18,20 @@ interface KategorijeDao {
     suspend fun insertOrUpdate(kategorije: Kategorije)
 
     @Query("SELECT * FROM kategorije")
-    suspend fun getAll() : List<Kategorije>
+    fun getAll() : List<Kategorije>
 
     @Query("DELETE FROM kategorije")
     suspend fun deleteAll()
 
     @Query("DELETE FROM kategorije WHERE id = :id_K")
-    suspend fun deleteId(id_K : Int)
+    fun deleteId(id_K : Int)
 
     @Update
     suspend fun update(kategorije: Kategorije?)
 
     @Query("SELECT id FROM kategorije ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM kategorije WHERE id = :id_K")
-    suspend fun getById(id_K : Int) : List<Kategorije>
+    fun getById(id_K : Int) : Kategorije
 }

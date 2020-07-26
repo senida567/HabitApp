@@ -7,6 +7,7 @@ import com.example.projekat.entity.TipoviAktivnosti
 @Dao
 interface InkrementalneDao {
 
+
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -17,7 +18,7 @@ interface InkrementalneDao {
     suspend fun insertOrUpdate(inkrementalne: Inkrementalne)
 
     @Query("SELECT * FROM inkrementalne")
-    suspend fun getAll() : List<Inkrementalne>
+    fun getAll() : List<Inkrementalne>
 
     @Query("DELETE FROM inkrementalne")
     suspend fun deleteAll()
@@ -29,8 +30,11 @@ interface InkrementalneDao {
     suspend fun update(inkrementalne: Inkrementalne?)
 
     @Query("SELECT id FROM inkrementalne ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM inkrementalne WHERE id = :id_I")
     suspend fun getById(id_I : Int) : List<Inkrementalne>
+
+    @Query("SELECT * FROM inkrementalne WHERE id_aktivnosti = :id")
+    fun getByIdAktivnosti(id : Int) : Inkrementalne
 }

@@ -1,6 +1,8 @@
 package com.example.projekat.ui.categories
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,22 +12,33 @@ import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.adapter.KategorijeAdapter
 import com.example.projekat.entity.Kategorije
-import com.example.projekat.entity.TipoviAktivnosti
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.kategorije_fragment.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
 
-class KategorijeFragment(db : AppDatabase, l : List<Kategorije>) ://, tAL : List<TipoviAktivnosti>) :
-    Fragment(), KategorijeAdapter.OnElementListener {
+class KategorijeFragment(db : AppDatabase) :
+    Fragment(), KategorijeAdapter.OnElementListener, CoroutineScope {
+    private var job: Job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     private lateinit var btn : FloatingActionButton
     private var db : AppDatabase
     private var kategorijeList : List<Kategorije>
-    //private var tipoviAktivnostiList : List<TipoviAktivnosti>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -58,23 +71,26 @@ class KategorijeFragment(db : AppDatabase, l : List<Kategorije>) ://, tAL : List
         fun newInstance(): KategorijeFragment = MainActivity.db?.let { KategorijeFragment(it) }
     }*/
 
-    open fun dodajKategoriju() {
-        var fr = getFragmentManager()?.beginTransaction()
-        fr?.replace(R.id.fragment_container, DodajKategorijuFragment())
+    fun dodajKategoriju() {
+        val fr = getFragmentManager()?.beginTransaction()
+        fr?.replace(R.id.fragment_container, DodajKategorijuFragment(db))
         fr?.addToBackStack(null)
         fr?.commit()
     }
 
     override fun onElementClick(position: Int) {
         var fr = getFragmentManager()?.beginTransaction()
-        fr?.replace(R.id.fragment_container, AktivnostiFragment(kategorijeList.get(position), db))
+        Log.d(TAG, "onElementClick: " + db.kategorijeDao().getById(position))
+        Log.d(TAG, "onElementClick: " + kategorijeList.get(position))
+        fr?.replace(R.id.fragment_container, AktivnostiFragment(kategorijeList.get(position), db, false))
         fr?.addToBackStack(null)
         fr?.commit()
     }
 
     init {
         this.db = db
-        this.kategorijeList = l
+        this.kategorijeList = db.kategorijeDao().getAll()
     }
+
 
 }

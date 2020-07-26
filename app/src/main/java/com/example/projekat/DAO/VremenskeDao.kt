@@ -29,8 +29,11 @@ interface VremenskeDao {
     suspend fun update(vremenske: Vremenske?)
 
     @Query("SELECT id FROM vremenske ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM vremenske WHERE id = :id_V")
     suspend fun getById(id_V : Int) : List<Vremenske>
+
+    @Query("SELECT * FROM vremenske WHERE id_aktivnosti = :id")
+    fun getByIdAktivnosti(id : Int) : Vremenske
 }
