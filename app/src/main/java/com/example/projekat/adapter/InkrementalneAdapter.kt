@@ -26,7 +26,7 @@ class InkrementalneAdapter(inkrementLista: List<Inkrementalne>) :
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna)
             unos = itemView.findViewById(R.id.unos_pocetna)
-            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna)
+            mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna_inkrementalna)
         }
     }
 

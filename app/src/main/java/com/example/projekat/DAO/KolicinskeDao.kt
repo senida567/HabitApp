@@ -33,4 +33,7 @@ interface KolicinskeDao {
 
     @Query("SELECT * FROM kolicinske WHERE id = :id_K")
     suspend fun getById(id_K : Int) : List<Kolicinske>
+
+    @Query("SELECT kolicina FROM kolicinske WHERE id_aktivnosti = :id_K")
+    fun getKolicinaById(id_K : Int) : Int
 }

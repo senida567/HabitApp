@@ -9,7 +9,7 @@
     android:minHeight="72dp">
 
     <TextView
-        android:id="@+id/naziv_aktivnosti_pocetna"
+        android:id="@+id/naziv_aktivnosti_pocetna_vremenska"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/unos_pocetna"
+        android:id="@+id/unos_pocetna_vremenska"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -44,17 +44,6 @@
         android:clickable="true"
         android:focusable="true"
         android:text="@string/start"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/ukloni_aktivnost"
-        android:layout_width="30dp"
-        android:layout_height="35dp"
-        android:text="@string/ukloni"
-        android:textSize="10sp"
-        android:clickable="true"
-        android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

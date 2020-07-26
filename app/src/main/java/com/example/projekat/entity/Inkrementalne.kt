@@ -25,6 +25,6 @@ data class Inkrementalne (
     val inkrement : Int,
 
     @ColumnInfo(name = "broj")
-    val broj : Int
+    var broj : Int
 
 )

@@ -26,11 +26,26 @@ interface InkrementalneDao {
     suspend fun deleteId(id_I : Int)
 
     @Update
-    suspend fun update(inkrementalne: Inkrementalne?)
+    fun update(inkrementalne: Inkrementalne?)
 
     @Query("SELECT id FROM inkrementalne ORDER BY id DESC LIMIT 1")
     suspend fun getLastId() : Int
 
     @Query("SELECT * FROM inkrementalne WHERE id = :id_I")
     suspend fun getById(id_I : Int) : List<Inkrementalne>
+
+    @Query("SELECT * FROM inkrementalne WHERE id = :id_I")
+    fun getAktivnostById(id_I : Int) : Inkrementalne
+
+    @Query("SELECT * FROM inkrementalne WHERE id_aktivnosti = :id_I")
+    fun getInkrementalnaByIdAktivnosti(id_I : Int) : Inkrementalne
+
+    @Query("SELECT broj FROM inkrementalne WHERE id_aktivnosti = :id_I")
+    fun getBrojByIdAktivnosti(id_I : Int) : Int
+
+    @Query("SELECT inkrement FROM inkrementalne WHERE id_aktivnosti = :id_I")
+    fun getInkrementByIdAktivnosti(id_I : Int) : Int
+
+    @Query("UPDATE inkrementalne SET broj= :broj WHERE id_aktivnosti = :id_I")
+    fun updateBroj(broj : Int, id_I : Int)
 }
