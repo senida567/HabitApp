@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
+import com.example.projekat.adapter.AktivnostiAdapter
 import com.example.projekat.adapter.PocetneAktivnostiAdapter
 import com.example.projekat.entity.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -44,21 +44,33 @@
         app:layout_constraintTop_toBottomOf="@id/nazivKategorije"
         android:layout_marginTop="10dp" />
 
+    <TextView
+        android:id="@+id/tipKategorije"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TIP KATEGORIJE"
+        android:textSize="18dp"
+        android:textColor="#F11111"
+        app:layout_constraintEnd_toEndOf="@id/frame"
+        app:layout_constraintStart_toStartOf="@id/frame"
+        app:layout_constraintTop_toBottomOf="@id/slika1"
+        android:layout_marginTop="10dp" />
+
     <ImageView
         android:id="@+id/slika1"
         android:layout_width="100dp"
-        android:layout_height="120dp"
+        android:layout_height="80dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/recyclerView"
+        app:layout_constraintTop_toBottomOf="@id/osobineKategorije"
         android:src="@drawable/activity_icon"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         />
 
     <Button
         android:id="@+id/izbrisiKategoriju"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
         android:text="IZBRISI"
         android:textColor="#111111"
         android:background="@color/colorPrimary"
@@ -71,48 +83,20 @@
         />
 
     <Button
-        android:id="@+id/dodajAktivnostInkrementalna"
-        android:layout_width="125dp"
-        android:layout_height="20dp"
-        android:text="+INKREMENTALNA"
+        android:id="@+id/dodajAktivnost"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="DODAJ NOVU"
         android:textColor="#111111"
         android:background="@color/colorPrimary"
+        app:layout_constraintLeft_toRightOf="@id/slika1"
         app:layout_constraintStart_toEndOf="@id/slika1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/dodajAktivnostKolicinska"
-        android:layout_marginBottom="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        />
-    <Button
-        android:id="@+id/dodajAktivnostKolicinska"
-        android:layout_width="125dp"
-        android:layout_height="20dp"
-        android:text="+KOLICINSKA"
-        android:textColor="#111111"
-        android:background="@color/colorPrimary"
-        app:layout_constraintStart_toEndOf="@id/slika1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/dodajAktivnostVremenska"
-        android:layout_marginBottom="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        />
-    <Button
-        android:id="@+id/dodajAktivnostVremenska"
-        android:layout_width="125dp"
-        android:layout_height="20dp"
-        android:text="+VREMENSKA"
-        android:textColor="#111111"
-        android:background="@color/colorPrimary"
-        app:layout_constraintStart_toEndOf="@id/slika1"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/frame"
-        android:layout_marginBottom="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="35dp"
         android:clickable="true"
         android:focusable="true"
         />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

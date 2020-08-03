@@ -10,13 +10,13 @@ import com.example.projekat.R
 class KategorijeViewModel(inflater: LayoutInflater, parent: ViewGroup) :
     RecyclerView.ViewHolder(inflater.inflate(R.layout.kategorije_element, parent, false)) {
     private var naziv: EditText? = null
+    private var osobina: EditText? = null
+    private var tip : EditText? = null
 
     init {
         naziv = itemView.findViewById(R.id.naziv)
-    }
-
-    fun bind() {
-
+        osobina = itemView.findViewById(R.id.osobina)
+        tip = itemView.findViewById(R.id.tip)
     }
 
 }

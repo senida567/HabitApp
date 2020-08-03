@@ -38,4 +38,13 @@ interface TipoviAktivnostiDao {
 
     @Query("SELECT naziv FROM tipoviAktivnosti")
     fun getSveNazive() : List<String>
+
+  //  @Query("SELECT * FROM tipoviAktivnosti WHERE id = :id_TA")
+  //  fun getById(id_TA : Int) : TipoviAktivnosti
+
+  //  @Query("SELECT naziv FROM tipoviAktivnosti")
+  //  fun getAllNaziv() : List<String>
+
+  //  @Query("SELECT naziv FROM tipoviAktivnosti WHERE id = :id")
+  //  fun getNazivById(id : Int) : String
 }
