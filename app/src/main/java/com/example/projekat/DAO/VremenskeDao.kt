@@ -35,5 +35,5 @@ interface VremenskeDao {
     suspend fun getById(id_V : Int) : List<Vremenske>
 
     @Query("SELECT * FROM vremenske WHERE id_aktivnosti = :id")
-    fun getByIdAktivnosti(id : Int) : Vremenske
+    fun getVremenskaByIdAktivnosti(id : Int) : Vremenske
 }

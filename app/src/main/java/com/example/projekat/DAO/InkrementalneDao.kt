@@ -3,6 +3,7 @@ package com.example.projekat.DAO
 import androidx.room.*
 import com.example.projekat.entity.Inkrementalne
 import com.example.projekat.entity.TipoviAktivnosti
+import com.example.projekat.entity.Vremenske
 
 @Dao
 interface InkrementalneDao {
@@ -29,7 +30,7 @@ interface InkrementalneDao {
     fun update(inkrementalne: Inkrementalne?)
 
     @Query("SELECT id FROM inkrementalne ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM inkrementalne WHERE id = :id_I")
     suspend fun getById(id_I : Int) : List<Inkrementalne>

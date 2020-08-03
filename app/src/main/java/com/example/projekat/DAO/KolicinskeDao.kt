@@ -3,6 +3,7 @@ package com.example.projekat.DAO
 import androidx.room.*
 import com.example.projekat.entity.Kolicinske
 import com.example.projekat.entity.TipoviAktivnosti
+import com.example.projekat.entity.Vremenske
 
 @Dao
 interface KolicinskeDao {
@@ -29,11 +30,14 @@ interface KolicinskeDao {
     suspend fun update(kolicinske: Kolicinske?)
 
     @Query("SELECT id FROM kolicinske ORDER BY id DESC LIMIT 1")
-    suspend fun getLastId() : Int
+    fun getLastId() : Int
 
     @Query("SELECT * FROM kolicinske WHERE id = :id_K")
     suspend fun getById(id_K : Int) : List<Kolicinske>
 
     @Query("SELECT kolicina FROM kolicinske WHERE id_aktivnosti = :id_K")
     fun getKolicinaById(id_K : Int) : Int
+
+    @Query("SELECT * FROM kolicinske WHERE id_aktivnosti = :id")
+    fun getKolicinskaByIdAktivnosti(id : Int) : Kolicinske
 }

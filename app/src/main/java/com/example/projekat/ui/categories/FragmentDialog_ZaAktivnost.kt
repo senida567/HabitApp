@@ -88,8 +88,8 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
             view?.findViewById<EditText>(R.id.editKraj)?.setVisibility(View.GONE)
 
             view?.findViewById<TextView>(R.id.editNaziv)?.text = aktivnost.naziv
-            view?.findViewById<TextView>(R.id.editBroj)?.text = db.inkrementalneDao().getByIdAktivnosti(aktivnost.id).broj.toString()
-            view?.findViewById<TextView>(R.id.editInkrement)?.text = db.inkrementalneDao().getByIdAktivnosti(aktivnost.id).inkrement.toString()
+            view?.findViewById<TextView>(R.id.editBroj)?.text = db.inkrementalneDao().getInkrementalnaByIdAktivnosti(aktivnost.id).broj.toString()
+            view?.findViewById<TextView>(R.id.editInkrement)?.text = db.inkrementalneDao().getInkrementalnaByIdAktivnosti(aktivnost.id).inkrement.toString()
 
 
         }else if(s == "Kolicinske") {
@@ -104,7 +104,7 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
             view?.findViewById<EditText>(R.id.editKraj)?.setVisibility(View.GONE)
 
             view?.findViewById<TextView>(R.id.editNaziv)?.text = aktivnost.naziv
-            view?.findViewById<TextView>(R.id.editKolicina)?.text = db.kolicinskeDao().getByIdAktivnosti(aktivnost.id).kolicina.toString()
+            view?.findViewById<TextView>(R.id.editKolicina)?.text = db.kolicinskeDao().getKolicinskaByIdAktivnosti(aktivnost.id).kolicina.toString()
             view?.findViewById<TextView>(R.id.editMJ)?.text = db.mjerneJediniceDao().getByIdAktivnosti(aktivnost.id)
 
         }else {
@@ -119,8 +119,8 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
             view?.findViewById<EditText>(R.id.editInkrement)?.setVisibility(View.GONE)
 
             view?.findViewById<TextView>(R.id.editNaziv)?.text = aktivnost.naziv
-            view?.findViewById<TextView>(R.id.editPocetak)?.text = db.vremenskeDao().getByIdAktivnosti(aktivnost.id).pocetak
-            view?.findViewById<TextView>(R.id.editKraj)?.text = db.vremenskeDao().getByIdAktivnosti(aktivnost.id).kraj
+            view?.findViewById<TextView>(R.id.editPocetak)?.text = db.vremenskeDao().getVremenskaByIdAktivnosti(aktivnost.id).pocetak
+            view?.findViewById<TextView>(R.id.editKraj)?.text = db.vremenskeDao().getVremenskaByIdAktivnosti(aktivnost.id).kraj
 
         }
     }
@@ -130,7 +130,7 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
         val naziv = view?.findViewById<EditText>(R.id.editNaziv)?.text.toString()
 
         if(tip == 1) {
-            val noviIdInkr = db.inkrementalneDao().getByIdAktivnosti(aktivnost.id).id
+            val noviIdInkr = db.inkrementalneDao().getInkrementalnaByIdAktivnosti(aktivnost.id).id
             val inkrement = view?.findViewById<EditText>(R.id.editInkrement)?.text.toString()
             val broj = view?.findViewById<EditText>(R.id.editBroj)?.text.toString()
 
@@ -144,7 +144,7 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
                 }
             }
         } else if(tip == 2) {
-            val noviIdKol = db.kolicinskeDao().getByIdAktivnosti(aktivnost.id).id
+            val noviIdKol = db.kolicinskeDao().getKolicinskaByIdAktivnosti(aktivnost.id).id
             val kolicina = view?.findViewById<EditText>(R.id.editKolicina)?.text.toString()
             val noviIdMJ = db.mjerneJediniceDao().getLastId()
             val mjernaJ = view?.findViewById<EditText>(R.id.editMJ)?.text.toString()
@@ -160,7 +160,7 @@ class FragmentDialog_ZaAktivnost(db : AppDatabase, aktivnost : Aktivnosti) : Dia
                 }
             }
         } else {
-            val noviIdVr = db.vremenskeDao().getByIdAktivnosti(aktivnost.id).id
+            val noviIdVr = db.vremenskeDao().getVremenskaByIdAktivnosti(aktivnost.id).id
             val pocetak = view?.findViewById<EditText>(R.id.editPocetak)?.text.toString()
             val kraj = view?.findViewById<EditText>(R.id.editKraj)?.text.toString()
 

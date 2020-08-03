@@ -33,9 +33,9 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
     override fun onBindViewHolder(holder: AktivnostiViewHolder, position: Int) {
         if(tip == 1) {
             holder.naziv.setText(listaAktivnosti.get(position).naziv)
-            Log.d(TAG, "onBindViewHolder: " + db.inkrementalneDao().getByIdAktivnosti(listaAktivnosti.get(position).id))
-            holder.editBroj.setText(db.inkrementalneDao().getByIdAktivnosti(listaAktivnosti.get(position).id).broj.toString())
-            holder.editInkrement.setText(db.inkrementalneDao().getByIdAktivnosti(listaAktivnosti.get(position).id).inkrement.toString())
+            Log.d(TAG, "onBindViewHolder: " + db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id))
+            holder.editBroj.setText(db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id).broj.toString())
+            holder.editInkrement.setText(db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id).inkrement.toString())
             holder.mjernaJedinica.setVisibility(View.GONE)
             holder.editMjernaJedinica.setVisibility(View.GONE)
             holder.editKolicina.setVisibility(View.GONE)
@@ -51,7 +51,7 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
             holder.editInkrement.setVisibility(View.GONE)
             holder.inkrement.setVisibility(View.GONE)
             holder.editMjernaJedinica.setText(db.mjerneJediniceDao().getByIdAktivnosti(listaAktivnosti.get(position).id))
-            holder.editKolicina.setText(db.kolicinskeDao().getByIdAktivnosti(listaAktivnosti.get(position).id).kolicina.toString())
+            holder.editKolicina.setText(db.kolicinskeDao().getKolicinskaByIdAktivnosti(listaAktivnosti.get(position).id).kolicina.toString())
             holder.pocetak.setVisibility(View.GONE)
             holder.editPocetak.setVisibility(View.GONE)
             holder.kraj.setVisibility(View.GONE)
@@ -66,8 +66,8 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
             holder.mjernaJedinica.setVisibility(View.GONE)
             holder.editKolicina.setVisibility(View.GONE)
             holder.kolicina.setVisibility(View.GONE)
-            holder.editPocetak.setText(db.vremenskeDao().getByIdAktivnosti(listaAktivnosti.get(position).id).pocetak)
-            holder.editKraj.setText(db.vremenskeDao().getByIdAktivnosti(listaAktivnosti.get(position).id).kraj)
+            holder.editPocetak.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).pocetak)
+            holder.editKraj.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).kraj)
         }
     }
 

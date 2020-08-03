@@ -48,7 +48,7 @@ class DodajKategorijuFragment(db : AppDatabase) : Fragment(), CoroutineScope {
         var view = inflater.inflate(R.layout.fragment_dodaj_kategoriju, container, false)
 
         val spinner = view.findViewById<Spinner>(R.id.tip)
-        val l : List<String> = db.tipoviAktivnostiDao().getAllNaziv()
+        val l : List<String> = db.tipoviAktivnostiDao().getSveNazive()
 
         if (spinner != null) {
                 spinner.adapter = ArrayAdapter(
