@@ -32,4 +32,10 @@ interface TipoviAktivnostiDao {
 
     @Query("SELECT * FROM tipoviAktivnosti WHERE id = :id_TA")
     suspend fun getById(id_TA : Int) : TipoviAktivnosti
+
+    @Query("SELECT naziv FROM tipoviAktivnosti WHERE id = :id_TA")
+    fun getNazivById(id_TA : Int) : String
+
+    @Query("SELECT naziv FROM tipoviAktivnosti")
+    fun getSveNazive() : List<String>
 }

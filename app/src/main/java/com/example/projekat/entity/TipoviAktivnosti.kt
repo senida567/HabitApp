@@ -12,4 +12,5 @@ data class TipoviAktivnosti (
 
     @ColumnInfo(name = "naziv")
     val naziv : String
+
 )

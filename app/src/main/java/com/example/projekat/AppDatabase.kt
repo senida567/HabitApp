@@ -13,6 +13,7 @@ import androidx.work.WorkManager
 @Database(entities = [TipoviAktivnosti::class,
                       Kategorije::class,
                       Aktivnosti::class,
+                      GlavneAktivnosti::class,
                       Inkrementalne::class,
                       Kolicinske::class,
                       Vremenske::class,
@@ -24,6 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun tipoviAktivnostiDao() : TipoviAktivnostiDao
     abstract fun kategorijeDao() : KategorijeDao
     abstract fun aktivnostiDao() : AktivnostiDao
+    abstract fun glavneAktivnostiDao() : GlavneAktivnostiDao
     abstract fun inkrementalneDao() : InkrementalneDao
     abstract fun kolicinskeDao() : KolicinskeDao
     abstract fun vremenskeDao() : VremenskeDao

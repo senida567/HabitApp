@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     lateinit var kategorijeList: List<Kategorije>
     lateinit var aktivnostiList: List<Aktivnosti>
-    var listaTipovaAktivnosti: ArrayList<String> = arrayListOf()
 
     companion object {
         var db : AppDatabase? = null
@@ -71,10 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             kategorijeList = db.kategorijeDao().getAll()
             aktivnostiList = db.aktivnostiDao().getAll()
 
-            for (el in aktivnostiList) {
-                // ovo ce biti lista stringova
-                listaTipovaAktivnosti.add(db.tipoviAktivnostiDao().getById(el.id).naziv)
-            }
+            Log.d("DUZINA LISTE", aktivnostiList.size.toString())
             //tipoviAktivnostiList = db.tipoviAktivnostiDao().getAll()
         }
 
@@ -122,7 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (menuItem.itemId) {
             R.id.nav_pocetna -> {
                 title = "Početna stranica"
-                loadFragment(PocetnaFragment(db, aktivnostiList, listaTipovaAktivnosti))
+                loadFragment(PocetnaFragment(db, aktivnostiList))
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
@@ -162,7 +158,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (item.itemId) {
                 R.id.bottom_pocetna -> {
                     title = "Početna stranica"
-                    loadFragment(PocetnaFragment(db, aktivnostiList, listaTipovaAktivnosti))
+                    loadFragment(PocetnaFragment(db, aktivnostiList))
                 }
                 R.id.bottom_kategorije -> {
                     title = "Kategorije"

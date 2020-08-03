@@ -37,4 +37,7 @@ interface AktivnostiDao {
     @Query("SELECT * FROM aktivnosti WHERE id_kategorije = :id_K")
     suspend fun getById_K(id_K : Int) : List<Aktivnosti>
 
+    @Query("SELECT * FROM aktivnosti WHERE naziv = :naziv_A")
+    fun getByNaziv(naziv_A : String) : Aktivnosti
+
 }

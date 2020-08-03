@@ -11,19 +11,16 @@ import com.example.projekat.AppDatabase
 import com.example.projekat.DAO.InkrementalneDao
 import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
-import com.example.projekat.entity.Aktivnosti
-import com.example.projekat.entity.Inkrementalne
-import com.example.projekat.entity.Kolicinske
-import com.example.projekat.entity.Vremenske
+import com.example.projekat.entity.*
 import com.example.projekat.ui.home.PocetnaFragment
 
-class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: List<String>)
+class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
     : RecyclerView.Adapter<PocetneAktivnostiAdapter.BaseViewHolder>() {
 
-    private var listaAktivnosti : List<Aktivnosti>
+    private var listaAktivnosti : List<GlavneAktivnosti>
     // iz main-a prosljedjujem i listu tipova aktivnosti tako da se element u listaAktivnosti
     // i njegov tip u listaTipovaAktivnosti nalaze na istom indeksu u listama
-    private var listaTipovaAktivnosti : List<String>
+    private var listaTipovaAktivnosti : List<Int>
 
     init {
         this.listaAktivnosti = listaAktivnosti
@@ -83,19 +80,22 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
     }
 
     override fun getItemViewType(position: Int): Int {
-        val aktivnost = listaTipovaAktivnosti.get(position)
+        //val aktivnost = listaTipovaAktivnosti.get(position)
+        val aktivnost = listaAktivnosti[position]
+        //val tipAktivnosti = db?.kategorijeDao()?.getTipById(aktivnost.id_kategorije)
+        val tipAktivnosti = listaTipovaAktivnosti[position]
 
-        return when (aktivnost) {
-            "Inkrementalne" -> TYPE_INKREMENTALNE
-            "Vremenske" -> TYPE_VREMENSKE
-            "Kolicinske" -> TYPE_KOLICINSKE
-            else -> throw IllegalArgumentException("Invalid type of data " + position)
+        return when (tipAktivnosti) {
+            1 -> TYPE_INKREMENTALNE
+            3 -> TYPE_VREMENSKE
+            2 -> TYPE_KOLICINSKE
+            else -> throw IllegalArgumentException("Invalid type of data " + aktivnost.naziv)
         }
     }
 
     abstract class BaseViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        abstract fun bind (aktivnost : Aktivnosti)
+        abstract fun bind (aktivnost : GlavneAktivnosti)
     }
 
     class InkrementalneViewHolder(itemView: View) : BaseViewHolder(itemView) {
@@ -114,7 +114,7 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
             minusDugme = itemView.findViewById(R.id.minus_btn) // imaju samo inkrementalne aktivnosti
         }
 
-        override fun bind(aktivnost: Aktivnosti) {
+        override fun bind(aktivnost: GlavneAktivnosti) {
             // broj i inkrement mozda trebaju unutar setonclicklistenera
             val broj = db?.inkrementalneDao()?.getBrojByIdAktivnosti(aktivnost.id)
             val inkrement = db?.inkrementalneDao()?.getInkrementByIdAktivnosti(aktivnost.id)
@@ -157,7 +157,7 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
             dodajUnos = itemView.findViewById(R.id.unos_btn) // ovo imaju samo kolicinske aktivnosti
         }
 
-        override fun bind(aktivnost: Aktivnosti) {
+        override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
             mjernaJedinica.text =
                 db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
@@ -176,7 +176,7 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<Aktivnosti>, listaTipova: L
             unos = itemView.findViewById(R.id.unos_pocetna_vremenska) // ovo ima svaki tip aktivnosti
             startStop = itemView.findViewById(R.id.start_stop_btn) // imaju samo vremenske aktivnosti
         }
-        override fun bind(aktivnost: Aktivnosti) {
+        override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
         }
     }

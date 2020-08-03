@@ -33,4 +33,7 @@ interface KategorijeDao {
 
     @Query("SELECT * FROM kategorije WHERE id = :id_K")
     suspend fun getById(id_K : Int) : List<Kategorije>
+
+    @Query("SELECT tip FROM kategorije WHERE id = :id_K")
+    fun getTipById(id_K : Int) : Int
 }
