@@ -11,7 +11,7 @@ interface KolicinskeDao {
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(kolicinske: Kolicinske)
+     fun insert(kolicinske: Kolicinske)
 
     //REPLACE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima (npr. id isti) zamijeni se
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -40,4 +40,7 @@ interface KolicinskeDao {
 
     @Query("SELECT * FROM kolicinske WHERE id_aktivnosti = :id")
     fun getKolicinskaByIdAktivnosti(id : Int) : Kolicinske
+
+    @Query("UPDATE kolicinske SET kolicina= :kolicina WHERE id_aktivnosti = :id_I")
+    fun updateKolicina(kolicina : Int, id_I : Int)
 }

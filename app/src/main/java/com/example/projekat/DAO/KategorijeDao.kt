@@ -11,7 +11,7 @@ interface KategorijeDao {
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(kategorije: Kategorije)
+     fun insert(kategorije: Kategorije)
 
     //REPLACE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima (npr. id isti) zamijeni se
     @Insert(onConflict = OnConflictStrategy.REPLACE)

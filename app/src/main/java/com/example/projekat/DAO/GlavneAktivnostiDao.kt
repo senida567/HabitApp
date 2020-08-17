@@ -40,4 +40,10 @@ interface GlavneAktivnostiDao {
     @Query("SELECT * FROM glavneAktivnosti WHERE naziv = :naziv_A")
     fun getByNaziv(naziv_A : String) : GlavneAktivnosti
 
+    @Query("UPDATE glavneAktivnosti SET broj = :broj WHERE id = :id_I")
+    fun updateBroj(broj : Int, id_I : Int)
+
+    @Query("UPDATE glavneAktivnosti SET unos = :kolicina WHERE id = :id_K")
+    fun updateUnos(kolicina : Int, id_K : Int)
+
 }

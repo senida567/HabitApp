@@ -10,7 +10,7 @@ interface AktivnostiDao {
     //suspend - da ne ometa glavu radnju prilikom izvšavanja
     //IGNORE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima ignorise unos
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(aktivnosti: Aktivnosti)
+     fun insert(aktivnosti: Aktivnosti)
 
     //REPLACE - prije inserta pretrazi se tabela i ako ima kolona s aistim podacima (npr. id isti) zamijeni se
     @Insert(onConflict = OnConflictStrategy.REPLACE)

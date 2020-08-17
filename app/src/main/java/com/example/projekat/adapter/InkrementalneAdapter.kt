@@ -24,8 +24,8 @@ class InkrementalneAdapter(inkrementLista: List<Inkrementalne>) :
         var mjernaJedinica : TextView
 
         init {
-            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna)
-            unos = itemView.findViewById(R.id.unos_pocetna)
+            nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_inkrementalna)
+            unos = itemView.findViewById(R.id.unos_pocetna_inkrementalna)
             mjernaJedinica = itemView.findViewById(R.id.mjerna_jedinica_pocetna_inkrementalna)
         }
     }

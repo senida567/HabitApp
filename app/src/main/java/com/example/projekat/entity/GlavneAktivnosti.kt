@@ -20,6 +20,18 @@ data class GlavneAktivnosti (
     @ColumnInfo(name = "naziv")
     val naziv : String,
 
+    @ColumnInfo(name = "broj")
+    var broj : Int,
+
+    @ColumnInfo(name = "inkrement")
+    val inkrement : Int,
+
+    @ColumnInfo(name = "unos")
+    var unos : Int,
+
+    @ColumnInfo(name = "mjerna_jedinica")
+    val mjerna_jedinica : String,
+
     @ColumnInfo(name = "id_kategorije")
     val id_kategorije : Int
 

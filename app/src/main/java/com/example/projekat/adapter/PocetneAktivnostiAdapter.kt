@@ -14,15 +14,24 @@ import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.entity.*
 import com.example.projekat.ui.home.PocetnaFragment
 
-class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
+class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
     : RecyclerView.Adapter<PocetneAktivnostiAdapter.BaseViewHolder>() {
+
+    private var db: AppDatabase
 
     private var listaAktivnosti : List<GlavneAktivnosti>
     // iz main-a prosljedjujem i listu tipova aktivnosti tako da se element u listaAktivnosti
     // i njegov tip u listaTipovaAktivnosti nalaze na istom indeksu u listama
     private var listaTipovaAktivnosti : List<Int>
 
+    // kad kao tip proslijedim GlavneAktivnosti onda u fragmentu mogu pristupiti kolonama aktivnosti(atributima), u suprotnom ne mogu
+    var povecajInkrement: ((GlavneAktivnosti) -> Unit)? = null
+    var smanjiInkrement: ((GlavneAktivnosti) -> Unit)? = null
+    var unesiKolicinu: ((GlavneAktivnosti) -> Unit)? = null
+    var zapocniStopericu: ((GlavneAktivnosti) -> Unit)? = null
+
     init {
+        this.db = db
         this.listaAktivnosti = listaAktivnosti
         this.listaTipovaAktivnosti = listaTipova
     }
@@ -43,17 +52,34 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
             TYPE_INKREMENTALNE -> {
                 val view: View =
                     LayoutInflater.from(parent.context).inflate(R.layout.pocetna_inkrementalna_element, parent, false)
-                InkrementalneViewHolder(view)
+                InkrementalneViewHolder(view).apply {
+                    // ovo je kao receiver kod koji koristi proslijedjeni item
+                    // a evente handlamo tamo gdje deklarisemo adapter (u PocetnaFragment.kt)
+                    povecajInkrement = { aktivnost ->
+                        this@PocetneAktivnostiAdapter.povecajInkrement?.invoke(aktivnost)
+                    }
+                    smanjiInkrement = { aktivnost ->
+                        this@PocetneAktivnostiAdapter.smanjiInkrement?.invoke(aktivnost)
+                    }
+                }
             }
             TYPE_VREMENSKE -> {
                 val view: View =
                     LayoutInflater.from(parent.context).inflate(R.layout.pocetna_vremenska_element, parent, false)
-                VremenskeViewHolder(view)
+                VremenskeViewHolder(view).apply {
+                    zapocniStopericu = { aktivnost ->
+                        this@PocetneAktivnostiAdapter.zapocniStopericu?.invoke(aktivnost)
+                    }
+                }
             }
             TYPE_KOLICINSKE -> {
                 val view: View =
                     LayoutInflater.from(parent.context).inflate(R.layout.pocetna_kolicinska_element, parent, false)
-                KolicinskeViewHolder(view)
+                KolicinskeViewHolder(view).apply {
+                    unesiKolicinu = { aktivnost ->
+                        this@PocetneAktivnostiAdapter.unesiKolicinu?.invoke(aktivnost)
+                    }
+                }
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -80,9 +106,8 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
     }
 
     override fun getItemViewType(position: Int): Int {
-        //val aktivnost = listaTipovaAktivnosti.get(position)
         val aktivnost = listaAktivnosti[position]
-        //val tipAktivnosti = db?.kategorijeDao()?.getTipById(aktivnost.id_kategorije)
+        //val tipAktivnosti = db?.kategorijeDao()?.getTipById(aktivnost.id_kategorije) // vraca null
         val tipAktivnosti = listaTipovaAktivnosti[position]
 
         return when (tipAktivnosti) {
@@ -106,6 +131,10 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
         var plusDugme : Button
         var minusDugme : Button
 
+        // deklarisemo Higher-Order funkcije
+        var povecajInkrement: ((GlavneAktivnosti) -> Unit)? = null
+        var smanjiInkrement: ((GlavneAktivnosti) -> Unit)? = null
+
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_inkrementalna) // ovo ima svaki tip aktivnosti
             unos = itemView.findViewById(R.id.unos_pocetna_inkrementalna) // ovo ima svaki tip aktivnosti
@@ -116,29 +145,41 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
 
         override fun bind(aktivnost: GlavneAktivnosti) {
             // broj i inkrement mozda trebaju unutar setonclicklistenera
-            val broj = db?.inkrementalneDao()?.getBrojByIdAktivnosti(aktivnost.id)
-            val inkrement = db?.inkrementalneDao()?.getInkrementByIdAktivnosti(aktivnost.id)
+            // val broj = db?.inkrementalneDao()?.getBrojByIdAktivnosti(aktivnost.id)
+            // val broj = db.inkrementalneDao().getInkrementalnaByIdAktivnosti(aktivnost.id).broj
+            val broj = aktivnost.broj
+            // val inkrement = db?.inkrementalneDao()?.getInkrementByIdAktivnosti(aktivnost.id)
+            //val inkrement = db.inkrementalneDao().getInkrementalnaByIdAktivnosti(aktivnost.id).inkrement
+            val inkrement = aktivnost.inkrement
 
             nazivAktivnosti.text = aktivnost.naziv
             // todo: mjernu jedinicu mi ne prikazuje
-            mjernaJedinica.text =
-                db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id) // mjernu jedinicu mozemo dobiti po id-u aktivnosti
-             unos.text = broj.toString()
+            //mjernaJedinica.text = db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id) // mjernu jedinicu mozemo dobiti po id-u aktivnosti
+            mjernaJedinica.text = aktivnost.mjerna_jedinica
+            unos.text = broj.toString()
 
             plusDugme.setOnClickListener {
                 // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
                 // za taj inkrement treba povecati broj
-                if (broj != null) {
-                    db?.inkrementalneDao()?.updateBroj(broj + inkrement!!, aktivnost.id)
-                }
+                /*db?.glavneAktivnostiDao()?.updateBroj(broj + inkrement, aktivnost.id)
+                //db?.inkrementalneDao()?.updateBroj(broj + inkrement, aktivnost.id)
+                // todo: kad se postavi novi broj u bazi treba azurirati prikaz tj azurirati unos.text
+                broj = aktivnost.broj
+                unos.text = broj.toString()*/
+
+                //adapterOnClick(aktivnost)
+                // invoke() funkcija prosljedjuje vrijednost funkciji primatelju (receiver function)
+                // ponasa se kao sender funkcija
+                povecajInkrement?.invoke(aktivnost)
+
             }
 
             minusDugme.setOnClickListener {
                 // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
                 // za taj inkrement treba umanjiti broj
-                if (broj != null) {
-                    db?.inkrementalneDao()?.updateBroj(broj - inkrement!!, aktivnost.id)
-                }
+                db?.glavneAktivnostiDao()?.updateBroj(broj - inkrement, aktivnost.id)
+                //db?.inkrementalneDao()?.updateBroj(broj - inkrement, aktivnost.id)
+                smanjiInkrement?.invoke(aktivnost)
             }
         }
     }
@@ -150,6 +191,8 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
         var mjernaJedinica : TextView
         var dodajUnos : Button
 
+        var unesiKolicinu: ((GlavneAktivnosti) -> Unit)? = null
+
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_kolicinska) // ovo ima svaki tip aktivnosti
             unos = itemView.findViewById(R.id.unos_pocetna_kolicinska) // ovo ima svaki tip aktivnosti
@@ -159,9 +202,16 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
 
         override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
-            mjernaJedinica.text =
-                db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
-            unos.text = db?.kolicinskeDao()?.getKolicinaById(aktivnost.id).toString()
+            mjernaJedinica.text = aktivnost.mjerna_jedinica
+            //mjernaJedinica.text = db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
+            //unos.text = db?.kolicinskeDao()?.getKolicinaById(aktivnost.id).toString()
+            unos.text = aktivnost.unos.toString()
+
+            dodajUnos.setOnClickListener {
+                // otvara se polje za unos
+                // korisnik unosi vrijednost za kolicinsku aktivnost nakon cega se update-a kolona "unos"
+                unesiKolicinu?.invoke(aktivnost)
+            }
         }
     }
 
@@ -171,6 +221,8 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
         var unos : TextView
         var startStop : Button
 
+        var zapocniStopericu: ((GlavneAktivnosti) -> Unit)? = null
+
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_vremenska) // ovo ima svaki tip aktivnosti
             unos = itemView.findViewById(R.id.unos_pocetna_vremenska) // ovo ima svaki tip aktivnosti
@@ -178,18 +230,17 @@ class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTip
         }
         override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
+
+            startStop.setOnClickListener {
+                zapocniStopericu?.invoke(aktivnost)
+            }
         }
     }
 /*
     fun postaviListener(listener: MojClickListener) {
         this.listener = listener
-    }
-
-    interface MojClickListener {
-        fun povecajInkrement(aktivnost : Inkrementalne)
-        fun smanjiInkrement(aktivnost : Inkrementalne)
-        fun dodajUnos(aktivnost : Kolicinske)
     }*/
+
 /*
     class PocetneAktivnostiViewHolder(itemView: View, onElementListener: AktivnostiAdapter.OnElementListener):
         RecyclerView.ViewHolder(itemView), View.OnClickListener {

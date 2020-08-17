@@ -2,15 +2,20 @@ package com.example.projekat.ui.home
 
 import android.content.ContentValues
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
+import com.example.projekat.activity.MainActivity
 import com.example.projekat.adapter.AktivnostiAdapter
 import com.example.projekat.adapter.PocetneAktivnostiAdapter
 import com.example.projekat.entity.*
@@ -72,7 +77,70 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
             // listaAktivnosti.slice(0..3) - uzima prvi tri elementa iz liste
-            adapter = PocetneAktivnostiAdapter(glavneAktivnosti, listaTipovaAktivnosti)
+            adapter = PocetneAktivnostiAdapter(db, glavneAktivnosti, listaTipovaAktivnosti).apply {
+                    povecajInkrement = { aktivnost ->
+                        // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
+                        // za taj inkrement treba povecati broj
+
+                        db.glavneAktivnostiDao().updateBroj(aktivnost.broj + aktivnost.inkrement, aktivnost.id) // postavlja u bazu
+                        aktivnost.broj = aktivnost.broj + aktivnost.inkrement
+                        adapter?.notifyDataSetChanged()
+                        Log.d("BROJ POVECAN, SADA je", aktivnost.broj.toString())
+                    }
+                smanjiInkrement = { aktivnost ->
+                    if (aktivnost.broj > 0) {
+                        db.glavneAktivnostiDao().updateBroj(aktivnost.broj - aktivnost.inkrement, aktivnost.id) // postavlja u bazu
+                        aktivnost.broj = aktivnost.broj - aktivnost.inkrement
+                        adapter?.notifyDataSetChanged()
+                        Log.d("BROJ UMANJEN, SADA je", aktivnost.broj.toString())
+                    }
+                }
+                unesiKolicinu = { aktivnost ->
+                    val builder = context?.let { AlertDialog.Builder(it) }
+                    val inputField = EditText(context)
+                    inputField.maxLines = 1
+
+                    val layout = FrameLayout(context)
+
+                    layout.setPadding(45,15,45,0) //postavljam padding
+                    layout.addView(inputField)
+                    inputField.setRawInputType(InputType.TYPE_CLASS_NUMBER)
+
+                    if (builder != null) {
+                        builder.setView(layout)
+                    }
+
+                    if (builder != null) {
+                        builder.setTitle("Unesite količinu")
+                    }
+
+                    // dodajem OK i cancel dugmad
+                    if (builder != null) {
+                        builder.setPositiveButton("OK") { dialog, which ->
+                            val kolicina = inputField.text.toString().toInt()
+
+                            aktivnost.unos = kolicina
+                            db.glavneAktivnostiDao().updateUnos(kolicina, aktivnost.id)
+
+                            adapter?.notifyDataSetChanged()
+                        }
+                    }
+
+                    if (builder != null) {
+                        builder.setNegativeButton("Cancel", null)
+                    }
+
+                    // kreiram i prikazujem alert dialog
+                    val dialog = builder?.create()
+                    if (dialog != null) {
+                        dialog.show()
+                    }
+
+                }
+                zapocniStopericu = { aktivnost ->
+                    Toast.makeText(requireActivity(), "Stoperica pokrenuta!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         fabPocetna = view.findViewById(R.id.fabPocetna)
@@ -93,22 +161,32 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
         Log.d("GLAVNE AKTIVNOSTI LISTA", glavneAktivnosti.size.toString())
     }
 
-    fun povecajInkrement(aktivnost: Inkrementalne) {
+    fun povecajInkrement2(aktivnost: GlavneAktivnosti) {
+        // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
+        // za taj inkrement treba povecati broj
+        val broj = aktivnost.broj
+        val inkrement = aktivnost.inkrement
+
+        MainActivity.db?.glavneAktivnostiDao()?.updateBroj(broj + inkrement, aktivnost.id)
+        //db?.inkrementalneDao()?.updateBroj(broj + inkrement, aktivnost.id)
+        // todo: kad se postavi novi broj u bazi treba azurirati prikaz tj azurirati unos.text
+        //broj = aktivnost.broj
+        //unos.text = broj.toString()
         // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
         // za taj inkrement treba povecati broj
         aktivnost.broj += aktivnost.inkrement
     }
 
-    fun smanjiInkrement(aktivnost: Inkrementalne) {
+    fun smanjiInkrement2(aktivnost: GlavneAktivnosti) {
         aktivnost.broj -= aktivnost.inkrement
     }
 
-    fun dodajUnos(aktivnost: Kolicinske) {
+    fun dodajUnos(aktivnost: GlavneAktivnosti) {
 
     }
 
     private fun dodajAktivnost(view: View) {
-        /* todo: korisniku se prikaze lista vec postojecih aktivnosti u bazi
+        /* korisniku se prikaze lista vec postojecih aktivnosti u bazi
         *   aktivnost koju odabere se dodaje na pocetnu stranicu */
         val naziviAktivnosti : ArrayList<String> = arrayListOf()
         odabraneAktivnosti = ArrayList<Int>()
@@ -149,15 +227,21 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
 
                     // ako vec postoji odabrana aktivnost na pocetnoj, insert je nece ponovo dodati
                     val aktivnostZaDodavanje = db.aktivnostiDao().getByNaziv(naziv)
-                    db.glavneAktivnostiDao().insert(GlavneAktivnosti(aktivnostZaDodavanje.id, aktivnostZaDodavanje.naziv, aktivnostZaDodavanje.id_kategorije))
+                    db.glavneAktivnostiDao().insert(GlavneAktivnosti(aktivnostZaDodavanje.id, aktivnostZaDodavanje.naziv,
+                        db.inkrementalneDao().getBrojByIdAktivnosti(aktivnostZaDodavanje.id),
+                        db.inkrementalneDao().getInkrementByIdAktivnosti(aktivnostZaDodavanje.id),
+                        db.kolicinskeDao().getKolicinaById(aktivnostZaDodavanje.id),
+                        db.mjerneJediniceDao().getByIdAktivnosti(aktivnostZaDodavanje.id),
+                        aktivnostZaDodavanje.id_kategorije))
+
+                    dodajListe()
                 }
 
-                dodajListe()
+                //dodajListe()
 
                 recyclerViewPocetna.apply {
                     adapter?.notifyDataSetChanged()
                 }
-
             }
         }
 
