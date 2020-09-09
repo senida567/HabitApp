@@ -36,4 +36,16 @@ interface VremenskeDao {
 
     @Query("SELECT * FROM vremenske WHERE id_aktivnosti = :id")
     fun getVremenskaByIdAktivnosti(id : Int) : Vremenske
+
+    @Query("SELECT pocetak FROM vremenske WHERE id_aktivnosti = :id")
+    fun getVrijemePocetkaByIdAktivnosti(id : Int) : String
+
+    @Query("SELECT kraj FROM vremenske WHERE id_aktivnosti = :id")
+    fun getVrijemeKrajaByIdAktivnosti(id : Int) : String
+
+    @Query("UPDATE vremenske SET pocetak= :vrijeme WHERE id_aktivnosti = :id")
+    fun updatePocetak(vrijeme : String, id : Int)
+
+    @Query("UPDATE vremenske SET kraj= :vrijeme WHERE id_aktivnosti = :id")
+    fun updateKraj(vrijeme : String, id : Int)
 }

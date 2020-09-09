@@ -28,16 +28,20 @@ class PodaciZaBazu(db : AppDatabase){
             db.kategorijeDao().insert(Kategorije(4, "Tekućine", 1, ""))
 
             db.aktivnostiDao().insert(Aktivnosti(1, "Jutarnje trčanje", 1))
-            db.glavneAktivnostiDao().insert(GlavneAktivnosti(1, "Jutarnje trčanje", 0, 0, 0,"min", 1))
+            db.glavneAktivnostiDao().insert(GlavneAktivnosti(1, "Jutarnje trčanje", 0, 0, 0, 0, "min", 1))
             db.vremenskeDao().insert(Vremenske(1, 1, "", ""))
             db.mjerneJediniceDao().insert(MjerneJedinice(2, "min", 1))
+
+            db.aktivnostiDao().insert(Aktivnosti(5, "Večernje trčanje", 1))
+            db.vremenskeDao().insert(Vremenske(2, 5, "", ""))
+            db.mjerneJediniceDao().insert(MjerneJedinice(5, "min", 5))
 
             db.aktivnostiDao().insert(Aktivnosti(2, "Unos kalorija", 2))
             db.kolicinskeDao().insert(Kolicinske(1, 2, 200))
             db.mjerneJediniceDao().insert(MjerneJedinice(1, "kcal", 2))
 
             db.aktivnostiDao().insert(Aktivnosti(3, "Računarske mreže", 3))
-            db.glavneAktivnostiDao().insert(GlavneAktivnosti(3, "Računarske mreže", 0, 1, 0,"sati",3))
+            db.glavneAktivnostiDao().insert(GlavneAktivnosti(3, "Računarske mreže", 0, 1, 0,0,"sati",3))
             db.inkrementalneDao().insert(Inkrementalne(1, 3, 1, 0))
             db.mjerneJediniceDao().insert(MjerneJedinice(3, "sati", 3))
 

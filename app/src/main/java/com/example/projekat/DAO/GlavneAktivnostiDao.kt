@@ -46,4 +46,7 @@ interface GlavneAktivnostiDao {
     @Query("UPDATE glavneAktivnosti SET unos = :kolicina WHERE id = :id_K")
     fun updateUnos(kolicina : Int, id_K : Int)
 
+    @Query("UPDATE glavneAktivnosti SET proteklo_vrijeme = :vrijeme WHERE id = :id_V")
+    fun updateProtekloVrijeme(vrijeme : Long, id_V : Int)
+
 }

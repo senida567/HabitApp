@@ -29,6 +29,9 @@ data class GlavneAktivnosti (
     @ColumnInfo(name = "unos")
     var unos : Int,
 
+    @ColumnInfo(name = "proteklo_vrijeme")
+    var proteklo_vrijeme : Long?,
+
     @ColumnInfo(name = "mjerna_jedinica")
     val mjerna_jedinica : String,
 

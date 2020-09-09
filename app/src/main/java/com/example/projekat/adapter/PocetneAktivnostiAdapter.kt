@@ -1,10 +1,12 @@
 package com.example.projekat.adapter
 
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Chronometer
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projekat.AppDatabase
@@ -13,6 +15,7 @@ import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.entity.*
 import com.example.projekat.ui.home.PocetnaFragment
+import kotlinx.android.synthetic.main.pocetna_vremenska_element.view.*
 
 class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
     : RecyclerView.Adapter<PocetneAktivnostiAdapter.BaseViewHolder>() {
@@ -83,9 +86,6 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
-        /*val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.pocetna_fragment, parent, false)
-        return PocetneAktivnostiViewHolder(view, mOnElementListener)*/
     }
 
     override fun getItemCount(): Int {
@@ -107,7 +107,6 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
 
     override fun getItemViewType(position: Int): Int {
         val aktivnost = listaAktivnosti[position]
-        //val tipAktivnosti = db?.kategorijeDao()?.getTipById(aktivnost.id_kategorije) // vraca null
         val tipAktivnosti = listaTipovaAktivnosti[position]
 
         return when (tipAktivnosti) {
@@ -153,30 +152,22 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
             val inkrement = aktivnost.inkrement
 
             nazivAktivnosti.text = aktivnost.naziv
-            // todo: mjernu jedinicu mi ne prikazuje
-            //mjernaJedinica.text = db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id) // mjernu jedinicu mozemo dobiti po id-u aktivnosti
             mjernaJedinica.text = aktivnost.mjerna_jedinica
             unos.text = broj.toString()
 
             plusDugme.setOnClickListener {
-                // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
-                // za taj inkrement treba povecati broj
                 /*db?.glavneAktivnostiDao()?.updateBroj(broj + inkrement, aktivnost.id)
                 //db?.inkrementalneDao()?.updateBroj(broj + inkrement, aktivnost.id)
                 // todo: kad se postavi novi broj u bazi treba azurirati prikaz tj azurirati unos.text
                 broj = aktivnost.broj
                 unos.text = broj.toString()*/
 
-                //adapterOnClick(aktivnost)
                 // invoke() funkcija prosljedjuje vrijednost funkciji primatelju (receiver function)
                 // ponasa se kao sender funkcija
                 povecajInkrement?.invoke(aktivnost)
-
             }
 
             minusDugme.setOnClickListener {
-                // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
-                // za taj inkrement treba umanjiti broj
                 db?.glavneAktivnostiDao()?.updateBroj(broj - inkrement, aktivnost.id)
                 //db?.inkrementalneDao()?.updateBroj(broj - inkrement, aktivnost.id)
                 smanjiInkrement?.invoke(aktivnost)
@@ -203,13 +194,9 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
         override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
             mjernaJedinica.text = aktivnost.mjerna_jedinica
-            //mjernaJedinica.text = db?.mjerneJediniceDao()?.getByIdAktivnosti(aktivnost.id)
-            //unos.text = db?.kolicinskeDao()?.getKolicinaById(aktivnost.id).toString()
             unos.text = aktivnost.unos.toString()
 
             dodajUnos.setOnClickListener {
-                // otvara se polje za unos
-                // korisnik unosi vrijednost za kolicinsku aktivnost nakon cega se update-a kolona "unos"
                 unesiKolicinu?.invoke(aktivnost)
             }
         }
@@ -218,43 +205,33 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
     class VremenskeViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         var nazivAktivnosti : TextView
-        var unos : TextView
+        var chronometer : Chronometer
         var startStop : Button
 
         var zapocniStopericu: ((GlavneAktivnosti) -> Unit)? = null
 
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_vremenska) // ovo ima svaki tip aktivnosti
-            unos = itemView.findViewById(R.id.unos_pocetna_vremenska) // ovo ima svaki tip aktivnosti
+            chronometer = itemView.findViewById(R.id.chronometer) // ovo ima svaki tip aktivnosti
             startStop = itemView.findViewById(R.id.start_stop_btn) // imaju samo vremenske aktivnosti
         }
         override fun bind(aktivnost: GlavneAktivnosti) {
             nazivAktivnosti.text = aktivnost.naziv
+
+            // trebam koristiti setonchronometerticklistener u kojem na svaki tik spremam
+            // proteklo vrijeme u bazu jer kad izvrsim promjenu u aktivnosti nekog drugog tipa
+            // stoperica se reseta i nastavlja od 00:00 brojanje zbog adapter?.notifyDataSetChanged() koji se tada poziva
+            // ovako ce nastaviti od zadnje sekunde brojanje
+            chronometer.setOnChronometerTickListener({
+                aktivnost.proteklo_vrijeme = SystemClock.elapsedRealtime() - chronometer.getBase()
+            })
+
+            val protekleMilisekunde = aktivnost.proteklo_vrijeme!!
+            chronometer.base = SystemClock.elapsedRealtime() - protekleMilisekunde  // ako nije započeta štoperica, chronometer ce prikazivati zadnje vrijeme trajanja stoperice
 
             startStop.setOnClickListener {
                 zapocniStopericu?.invoke(aktivnost)
             }
         }
     }
-/*
-    fun postaviListener(listener: MojClickListener) {
-        this.listener = listener
-    }*/
-
-/*
-    class PocetneAktivnostiViewHolder(itemView: View, onElementListener: AktivnostiAdapter.OnElementListener):
-        RecyclerView.ViewHolder(itemView), View.OnClickListener {
-
-        var mOnElementListener: AktivnostiAdapter.OnElementListener
-
-        init {
-            mOnElementListener = onElementListener
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(view: View?) {
-            mOnElementListener.onElementClick(adapterPosition)
-        }
-
-    }*/
 }

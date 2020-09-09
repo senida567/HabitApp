@@ -2,12 +2,14 @@ package com.example.projekat.ui.home
 
 import android.content.ContentValues
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.InputType
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Chronometer
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -21,9 +23,12 @@ import com.example.projekat.adapter.PocetneAktivnostiAdapter
 import com.example.projekat.entity.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.pocetna_fragment.*
+import kotlinx.android.synthetic.main.pocetna_vremenska_element.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fragment() {
 
@@ -35,14 +40,6 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
     // lista s par pocetnih aktivnosti koju prosljedjujem adapteru
     lateinit private var glavneAktivnosti: ArrayList<GlavneAktivnosti>
     private var listaTipovaAktivnosti = arrayListOf<Int>()
-
-    private lateinit var inkrementalneList: List<Inkrementalne>
-    private lateinit var kolicinskeList: List<Kolicinske>
-    private lateinit var vremenskeList: List<Vremenske>
-
-    //lateinit private var inkrementalneAdapter : InkrementalneAdapter
-    // todo: lateinit private var vremenskeAdapter : VremenskeAdapter
-    // todo: lateinit private var kolicinskeAdapter : KolicinskeAdapter
 
     lateinit var fabPocetna: FloatingActionButton
 
@@ -76,26 +73,24 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
-            // listaAktivnosti.slice(0..3) - uzima prvi tri elementa iz liste
             adapter = PocetneAktivnostiAdapter(db, glavneAktivnosti, listaTipovaAktivnosti).apply {
                     povecajInkrement = { aktivnost ->
                         // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
                         // za taj inkrement treba povecati broj
-
                         db.glavneAktivnostiDao().updateBroj(aktivnost.broj + aktivnost.inkrement, aktivnost.id) // postavlja u bazu
                         aktivnost.broj = aktivnost.broj + aktivnost.inkrement
                         adapter?.notifyDataSetChanged()
-                        Log.d("BROJ POVECAN, SADA je", aktivnost.broj.toString())
                     }
                 smanjiInkrement = { aktivnost ->
                     if (aktivnost.broj > 0) {
                         db.glavneAktivnostiDao().updateBroj(aktivnost.broj - aktivnost.inkrement, aktivnost.id) // postavlja u bazu
                         aktivnost.broj = aktivnost.broj - aktivnost.inkrement
                         adapter?.notifyDataSetChanged()
-                        Log.d("BROJ UMANJEN, SADA je", aktivnost.broj.toString())
                     }
                 }
                 unesiKolicinu = { aktivnost ->
+                    // otvara se polje za unos
+                    // korisnik unosi vrijednost za kolicinsku aktivnost nakon cega se update-a kolona "unos"
                     val builder = context?.let { AlertDialog.Builder(it) }
                     val inputField = EditText(context)
                     inputField.maxLines = 1
@@ -138,7 +133,22 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
 
                 }
                 zapocniStopericu = { aktivnost ->
-                    Toast.makeText(requireActivity(), "Stoperica pokrenuta!", Toast.LENGTH_SHORT).show()
+                    var vrijemeZaustavljanja : Long = 0 // varijabla koja cuva koliko je vremena proslo od pokretanja stoperice
+
+                    if (start_stop_btn.text == getString(R.string.start)) {
+                        chronometer.setBase(SystemClock.elapsedRealtime()); // uvijek pocinje od 00:00 brojanje
+                        db.vremenskeDao().updatePocetak((0).toString(), aktivnost.id)
+                        chronometer.start()
+                        start_stop_btn.setText(getString(R.string.stop))
+                    } else {
+                        vrijemeZaustavljanja = SystemClock.elapsedRealtime() - chronometer.getBase() // vrijeme koje je proteklo od pokretanja stoperice u milisekundama
+                        chronometer.stop()
+                        db.glavneAktivnostiDao().updateProtekloVrijeme(vrijemeZaustavljanja, aktivnost.id) // sprema vrijeme zaustavljanja (proteklo vrijeme) u milisekundama
+                        aktivnost.proteklo_vrijeme = vrijemeZaustavljanja
+                        db.vremenskeDao().updateKraj(vrijemeZaustavljanja.toString(), aktivnost.id) // sprema vrijeme zaustavljanja stoperice u milisekundama
+                        //chronometer.setBase(SystemClock.elapsedRealtime());
+                        start_stop_btn.setText(getString(R.string.start))
+                    }
                 }
             }
         }
@@ -156,33 +166,6 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
         for (el in glavneAktivnosti) {
             listaTipovaAktivnosti.add(db.kategorijeDao().getTipById(el.id_kategorije))
         }
-
-        Log.d(ContentValues.TAG, "INICIJALIZACIJA LISTI")
-        Log.d("GLAVNE AKTIVNOSTI LISTA", glavneAktivnosti.size.toString())
-    }
-
-    fun povecajInkrement2(aktivnost: GlavneAktivnosti) {
-        // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
-        // za taj inkrement treba povecati broj
-        val broj = aktivnost.broj
-        val inkrement = aktivnost.inkrement
-
-        MainActivity.db?.glavneAktivnostiDao()?.updateBroj(broj + inkrement, aktivnost.id)
-        //db?.inkrementalneDao()?.updateBroj(broj + inkrement, aktivnost.id)
-        // todo: kad se postavi novi broj u bazi treba azurirati prikaz tj azurirati unos.text
-        //broj = aktivnost.broj
-        //unos.text = broj.toString()
-        // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
-        // za taj inkrement treba povecati broj
-        aktivnost.broj += aktivnost.inkrement
-    }
-
-    fun smanjiInkrement2(aktivnost: GlavneAktivnosti) {
-        aktivnost.broj -= aktivnost.inkrement
-    }
-
-    fun dodajUnos(aktivnost: GlavneAktivnosti) {
-
     }
 
     private fun dodajAktivnost(view: View) {
@@ -231,17 +214,19 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
                         db.inkrementalneDao().getBrojByIdAktivnosti(aktivnostZaDodavanje.id),
                         db.inkrementalneDao().getInkrementByIdAktivnosti(aktivnostZaDodavanje.id),
                         db.kolicinskeDao().getKolicinaById(aktivnostZaDodavanje.id),
+                        0,//db.vremenskeDao().getVrijemeKrajaByIdAktivnosti(aktivnostZaDodavanje.id).toLong(),
                         db.mjerneJediniceDao().getByIdAktivnosti(aktivnostZaDodavanje.id),
                         aktivnostZaDodavanje.id_kategorije))
 
-                    dodajListe()
+                    //dodajListe()
                 }
 
-                //dodajListe()
+                dodajListe()
 
+                /* nicemu ne koristi, nista ne radi
                 recyclerViewPocetna.apply {
                     adapter?.notifyDataSetChanged()
-                }
+                }*/
             }
         }
 
@@ -255,5 +240,4 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             dialog.show()
         }
     }
-
 }

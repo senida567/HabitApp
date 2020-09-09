@@ -21,10 +21,10 @@ data class Vremenske (
     @ColumnInfo(name = "id_aktivnosti")
     val id_aktivnosti : Int,
 
-    @ColumnInfo(name = "pocetak")
+    @ColumnInfo(name = "pocetak") // u milisekundama
     val pocetak : String,
 
-    @ColumnInfo(name = "kraj")
-    val kraj : String
+    @ColumnInfo(name = "kraj")  // u milisekundama
+    var kraj : String?
 
 )
