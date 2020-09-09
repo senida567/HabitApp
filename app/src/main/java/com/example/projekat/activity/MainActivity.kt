@@ -115,31 +115,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(menuItem: MenuItem) : Boolean {
         when (menuItem.itemId) {
             R.id.nav_pocetna -> {
-                title = "Početna stranica"
+                title = getString(R.string.action_bar_pocetna_stranica)
                 loadFragment(PocetnaFragment(db, aktivnostiList))
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.nav_postignuca -> {
-                title = "Postignuća"
+                title = getString(R.string.action_bar_postignuca)
                 loadFragment(PostignucaFragment())
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.nav_napomene -> {
-                title = "Napomene"
+                title = getString(R.string.action_bar_napomene)
                 loadFragment(NapomeneFragment())
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.nav_postavke -> {
-                title = "Postavke"
+                title = getString(R.string.action_bar_postavke)
                 loadFragment(PostavkeFragment())
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.nav_podijeli -> {
-                title = "Podijeli"
+                title = getString(R.string.action_bar_podijeli)
                 loadFragment(PostavkeFragment())
                 drawer.closeDrawer(GravityCompat.START)
                 return true
@@ -155,15 +155,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             item.setChecked(true)
             when (item.itemId) {
                 R.id.bottom_pocetna -> {
-                    title = "Početna stranica"
+                    title = getString(R.string.action_bar_pocetna_stranica)
                     loadFragment(PocetnaFragment(db, aktivnostiList))
                 }
                 R.id.bottom_kategorije -> {
-                    title = "Kategorije"
+                    title = getString(R.string.action_bar_kategorije)
                     loadFragment(KategorijeFragment(db))
                 }
                 R.id.bottom_profil -> {
-                    title = "Profil"
+                    title = getString(R.string.action_bar_profil)
                     loadFragment(ProfilFragment())
                 }
             }

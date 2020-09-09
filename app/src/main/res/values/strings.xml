@@ -1,16 +1,16 @@
 <resources>
     <string name="app_name">Habit Tracker</string>
 
-    <string name="db_name">appDatabase_2</string>
+    <string name="db_name" translatable="false">appDatabase_2</string>
 
-    <string name="inkrementalne_service">InkrementalneService</string>
-    <string name="kategorije_service">KategorijeService</string>
-    <string name="kolicinske_service">KolicinskeService</string>
-    <string name="mjerne_jedinice_service">MjerneJediniceService</string>
-    <string name="osobine_service">OsobineService</string>
-    <string name="vremenske_service">VremenskeService</string>
+    <string name="inkrementalne_service" translatable="false">InkrementalneService</string>
+    <string name="kategorije_service" translatable="false">KategorijeService</string>
+    <string name="kolicinske_service" translatable="false">KolicinskeService</string>
+    <string name="mjerne_jedinice_service" translatable="false">MjerneJediniceService</string>
+    <string name="osobine_service" translatable="false">OsobineService</string>
+    <string name="vremenske_service" translatable="false">VremenskeService</string>
 
-    <string name="all_services">allServices</string>
+    <string name="all_services" translatable="false">allServices</string>
 
     <string name="menu_pocetna">Početna stranica</string>
     <string name="menu_postignuca">Postignuća</string>
@@ -22,18 +22,26 @@
 
     <string name="naziv_aktivnosti">Naziv</string>
 
-    <string name="otvori">open</string>
-    <string name="zatvori">close</string>
+    <string name="otvori" translatable="false">open</string>
+    <string name="zatvori" translatable="false">close</string>
 
-    <string name="plus">+</string>
-    <string name="minus">-</string>
+    <string name="plus" translatable="false">+</string>
+    <string name="minus" translatable="false">-</string>
     <string name="dodaj">Dodaj</string>
-    <string name="ukloni">x</string>
+    <string name="ukloni" translatable="false">x</string>
     <string name="start">Započni</string>
     <string name="stop">Zaustavi</string>
-    <string name="mjerna_jedinica">kcal</string>
+    <string name="mjerna_jedinica" translatable="false">kcal</string>
+
+    <string name="action_bar_pocetna_stranica">Početna stranica</string>
+    <string name="action_bar_kategorije">Kategorije</string>
+    <string name="action_bar_profil">Profil</string>
+    <string name="action_bar_postavke">Postavke</string>
+    <string name="action_bar_postignuca">Postignuca</string>
+    <string name="action_bar_napomene">Napomene</string>
+    <string name="action_bar_podijeli">Podijeli</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="_6_00">6:00</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="_6_00" translatable="false">6:00</string>
 </resources>
