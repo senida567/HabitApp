@@ -132,14 +132,14 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
                     }
 
                 }
-                zapocniStopericu = { aktivnost ->
+                zapocniStopericu = { aktivnost, chronometer, startStop ->
                     var vrijemeZaustavljanja : Long = 0 // varijabla koja cuva koliko je vremena proslo od pokretanja stoperice
 
-                    if (start_stop_btn.text == getString(R.string.start)) {
+                    if (startStop.text == getString(R.string.start)) {
                         chronometer.setBase(SystemClock.elapsedRealtime()); // uvijek pocinje od 00:00 brojanje
                         db.vremenskeDao().updatePocetak((0).toString(), aktivnost.id)
                         chronometer.start()
-                        start_stop_btn.setText(getString(R.string.stop))
+                        startStop.setText(getString(R.string.stop))
                     } else {
                         vrijemeZaustavljanja = SystemClock.elapsedRealtime() - chronometer.getBase() // vrijeme koje je proteklo od pokretanja stoperice u milisekundama
                         chronometer.stop()
@@ -147,8 +147,9 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
                         aktivnost.proteklo_vrijeme = vrijemeZaustavljanja
                         db.vremenskeDao().updateKraj(vrijemeZaustavljanja.toString(), aktivnost.id) // sprema vrijeme zaustavljanja stoperice u milisekundama
                         //chronometer.setBase(SystemClock.elapsedRealtime());
-                        start_stop_btn.setText(getString(R.string.start))
+                        startStop.setText(getString(R.string.start))
                     }
+
                 }
             }
         }

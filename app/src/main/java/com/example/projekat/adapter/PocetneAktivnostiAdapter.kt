@@ -31,7 +31,7 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
     var povecajInkrement: ((GlavneAktivnosti) -> Unit)? = null
     var smanjiInkrement: ((GlavneAktivnosti) -> Unit)? = null
     var unesiKolicinu: ((GlavneAktivnosti) -> Unit)? = null
-    var zapocniStopericu: ((GlavneAktivnosti) -> Unit)? = null
+    var zapocniStopericu: ((GlavneAktivnosti, Chronometer, Button) -> Unit)? = null
 
     init {
         this.db = db
@@ -70,8 +70,8 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
                 val view: View =
                     LayoutInflater.from(parent.context).inflate(R.layout.pocetna_vremenska_element, parent, false)
                 VremenskeViewHolder(view).apply {
-                    zapocniStopericu = { aktivnost ->
-                        this@PocetneAktivnostiAdapter.zapocniStopericu?.invoke(aktivnost)
+                    zapocniStopericu = { aktivnost, chronometer, startStop ->
+                        this@PocetneAktivnostiAdapter.zapocniStopericu?.invoke(aktivnost, chronometer, startStop)
                     }
                 }
             }
@@ -208,7 +208,7 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
         var chronometer : Chronometer
         var startStop : Button
 
-        var zapocniStopericu: ((GlavneAktivnosti) -> Unit)? = null
+        var zapocniStopericu: ((GlavneAktivnosti, Chronometer, Button) -> Unit)? = null
 
         init {
             nazivAktivnosti = itemView.findViewById(R.id.naziv_aktivnosti_pocetna_vremenska) // ovo ima svaki tip aktivnosti
@@ -230,7 +230,7 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
             chronometer.base = SystemClock.elapsedRealtime() - protekleMilisekunde  // ako nije započeta štoperica, chronometer ce prikazivati zadnje vrijeme trajanja stoperice
 
             startStop.setOnClickListener {
-                zapocniStopericu?.invoke(aktivnost)
+                zapocniStopericu?.invoke(aktivnost, chronometer, startStop)
             }
         }
     }
