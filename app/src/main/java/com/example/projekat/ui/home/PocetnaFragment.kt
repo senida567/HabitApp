@@ -78,12 +78,14 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
                         // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
                         // za taj inkrement treba povecati broj
                         db.glavneAktivnostiDao().updateBroj(aktivnost.broj + aktivnost.inkrement, aktivnost.id) // postavlja u bazu
+                        db.inkrementalneDao().updateBroj(aktivnost.broj + aktivnost.inkrement, aktivnost.id)
                         aktivnost.broj = aktivnost.broj + aktivnost.inkrement
                         adapter?.notifyDataSetChanged()
                     }
                 smanjiInkrement = { aktivnost ->
                     if (aktivnost.broj > 0) {
                         db.glavneAktivnostiDao().updateBroj(aktivnost.broj - aktivnost.inkrement, aktivnost.id) // postavlja u bazu
+                        db.inkrementalneDao().updateBroj(aktivnost.broj - aktivnost.inkrement, aktivnost.id)
                         aktivnost.broj = aktivnost.broj - aktivnost.inkrement
                         adapter?.notifyDataSetChanged()
                     }
@@ -116,7 +118,7 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
 
                             aktivnost.unos = kolicina
                             db.glavneAktivnostiDao().updateUnos(kolicina, aktivnost.id)
-
+                            db.kolicinskeDao().updateKolicina(kolicina, aktivnost.id)
                             adapter?.notifyDataSetChanged()
                         }
                     }
