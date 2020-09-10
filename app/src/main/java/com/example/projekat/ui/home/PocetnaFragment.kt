@@ -73,7 +73,7 @@ class PocetnaFragment(db : AppDatabase, listaAktivnosti: List<Aktivnosti>) : Fra
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
-            adapter = PocetneAktivnostiAdapter(db, glavneAktivnosti, listaTipovaAktivnosti).apply {
+            adapter = PocetneAktivnostiAdapter(glavneAktivnosti, listaTipovaAktivnosti).apply {
                     povecajInkrement = { aktivnost ->
                         // u bazi se nalazi inkrement koji je korisnik odabrao prilikom kreiranja aktivnosti
                         // za taj inkrement treba povecati broj

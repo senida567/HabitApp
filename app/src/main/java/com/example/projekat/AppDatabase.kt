@@ -7,8 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.projekat.DAO.*
 import com.example.projekat.entity.*
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 
 @Database(entities = [TipoviAktivnosti::class,
                       Kategorije::class,
@@ -17,7 +15,9 @@ import androidx.work.WorkManager
                       Inkrementalne::class,
                       Kolicinske::class,
                       Vremenske::class,
-                      MjerneJedinice::class],
+                      MjerneJedinice::class,
+                      Profil::class,
+                      Citati::class],
             version = 1,
             exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
@@ -30,6 +30,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun kolicinskeDao() : KolicinskeDao
     abstract fun vremenskeDao() : VremenskeDao
     abstract fun mjerneJediniceDao() : MjerneJediniceDao
+    abstract fun citatiDao() : CitatiDao
+    abstract fun profilDao() : ProfilDao
 
     companion object {
 
@@ -53,8 +55,6 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        //val request = OneTimeWorkRequestBuilder<PodaciZaBazu>().build()
-                        //WorkManager.getInstance(context).enqueue(request)
                     }
                 })
                 .allowMainThreadQueries()

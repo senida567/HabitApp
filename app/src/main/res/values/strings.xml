@@ -41,6 +41,36 @@
     <string name="action_bar_napomene">Napomene</string>
     <string name="action_bar_podijeli">Podijeli</string>
 
+    <string name="button_izbrisi">IZBRISI</string>
+    <string name="button_sacuvaj">SACUVAJ</string>
+    <string name="button_napusti">NAPUSTI</string>
+    <string name="unos_podataka">Morate unijeti tražene podatke!</string>
+    <string name="DA">DA</string>
+    <string name="NE">NE</string>
+    <string name="unesite_naziv_kategorije">Unesite naziv kategorije!</string>
+    <string name="odaberite_tip">Odaberite tip!</string>
+    <string name="dodana_nova">DODANA NOVA!</string>
+    <string name="button_dodaj">DODAJ</string>
+    <string name="alert_dialog">Brisanjem se brišu\n sve aktivnosti!\n\nJeste li sigurni\n da želite\n izbrisati kategoriju?"</string>
+
+    <string name="broj">Broj</string>
+    <string name="kolicina">Kolicina</string>
+    <string name="inkrement">Inkrement</string>
+    <string name="mjernaJedinica">Mjerna Jedinica</string>
+    <string name="pocetak">Pocetak</string>
+    <string name="kraj">Kraj</string>
+
+    <string name="dodaj_novu_kat">DODAJ NOVU KATEGORIJU</string>
+    <string name="naziv">Naziv</string>
+    <string name="osobina">Osobina</string>
+    <string name="tip">Tip</string>
+
+    <string name="ime">Ime</string>
+    <string name="prezime">Prezime</string>
+    <string name="oKorisniku">O Vama</string>
+    <string name="citat">Citat dana</string>
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="_6_00" translatable="false">6:00</string>

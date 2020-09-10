@@ -4,7 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.categories.DodajNovuAktivnostFragment">
+    tools:context=".ui.categories.DodajNovuAktivnostFragment"
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/naziv"

@@ -1,7 +1,6 @@
 package com.example.projekat.adapter
 
 import android.os.SystemClock
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,17 +9,14 @@ import android.widget.Chronometer
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projekat.AppDatabase
-import com.example.projekat.DAO.InkrementalneDao
 import com.example.projekat.R
 import com.example.projekat.activity.MainActivity.Companion.db
 import com.example.projekat.entity.*
-import com.example.projekat.ui.home.PocetnaFragment
-import kotlinx.android.synthetic.main.pocetna_vremenska_element.view.*
 
-class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
+class PocetneAktivnostiAdapter(listaAktivnosti: List<GlavneAktivnosti>, listaTipova: List<Int>)
     : RecyclerView.Adapter<PocetneAktivnostiAdapter.BaseViewHolder>() {
 
-    private var db: AppDatabase
+    private lateinit var db: AppDatabase
 
     private var listaAktivnosti : List<GlavneAktivnosti>
     // iz main-a prosljedjujem i listu tipova aktivnosti tako da se element u listaAktivnosti
@@ -34,7 +30,6 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
     var zapocniStopericu: ((GlavneAktivnosti, Chronometer, Button) -> Unit)? = null
 
     init {
-        this.db = db
         this.listaAktivnosti = listaAktivnosti
         this.listaTipovaAktivnosti = listaTipova
     }
@@ -51,6 +46,7 @@ class PocetneAktivnostiAdapter(db : AppDatabase, listaAktivnosti: List<GlavneAkt
         parent: ViewGroup,
         viewType: Int
     ): BaseViewHolder {
+        db = AppDatabase.getInstance(parent.context)
         return when (viewType) {
             TYPE_INKREMENTALNE -> {
                 val view: View =

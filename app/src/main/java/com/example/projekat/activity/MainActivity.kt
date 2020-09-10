@@ -1,10 +1,12 @@
 package com.example.projekat.activity
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -15,7 +17,6 @@ import com.example.projekat.R
 import com.example.projekat.entity.Aktivnosti
 import com.example.projekat.entity.Kategorije
 import com.example.projekat.ui.achievements.PostignucaFragment
-import com.example.projekat.ui.categories.DodajKategorijuFragment
 import com.example.projekat.ui.categories.KategorijeFragment
 import com.example.projekat.ui.home.PocetnaFragment
 import com.example.projekat.ui.notes.NapomeneFragment
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // lista aktivnostiList ostane neinicijalizirana
         //loadFragment(PocetnaFragment(db, aktivnostiList))
         // zasad nek se neki drugi fragment kojem ne treba baza ucitava na pocetku
-        loadFragment(NapomeneFragment())
+        loadFragment(KategorijeFragment())
         navigation_view.setNavigationItemSelectedListener(this)
 
     }
@@ -140,7 +141,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_podijeli -> {
                 title = getString(R.string.action_bar_podijeli)
-                loadFragment(PostavkeFragment())
+                //loadFragment(PostavkeFragment())
+                val url = "https://gmail.com/"
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(url)
+                startActivity(i)
                 drawer.closeDrawer(GravityCompat.START)
                 return true
             }
@@ -160,7 +165,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 R.id.bottom_kategorije -> {
                     title = getString(R.string.action_bar_kategorije)
-                    loadFragment(KategorijeFragment(db))
+                    loadFragment(KategorijeFragment())
                 }
                 R.id.bottom_profil -> {
                     title = getString(R.string.action_bar_profil)
@@ -171,16 +176,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
     override fun onPointerCaptureChanged(hasCapture: Boolean) {}
-
-    fun floatingActionButtonClicked() {
-        if(bottomNavView.selectedItemId == R.id.bottom_kategorije)  {
-            loadFragment(DodajKategorijuFragment(db))
-        }else if(bottomNavView.selectedItemId == R.id.bottom_profil)  {
-            //TO_DO:
-        }else if(bottomNavView.selectedItemId == R.id.bottom_pocetna) {
-            //TO_DO
-        }
-    }
-
-    fun getDB() : AppDatabase { return this.db }
 }

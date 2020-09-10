@@ -6,18 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.entity.*
 
-class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppDatabase, mOnElementListener: OnElementListener)
+class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, mOnElementListener: OnElementListener)
     : RecyclerView.Adapter<AktivnostiAdapter.AktivnostiViewHolder>() {
 
     private var listaAktivnosti : List<Aktivnosti>
-    private var db : AppDatabase
+    private lateinit var db : AppDatabase
     private var mOnElementListener : OnElementListener
     private var tip : Int
 
@@ -25,6 +24,7 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
         parent: ViewGroup,
         viewType: Int
     ): AktivnostiViewHolder {
+        db = AppDatabase.getInstance(parent.context)
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.aktivnosti_element, parent, false)
         return AktivnostiViewHolder(view, mOnElementListener)
@@ -100,17 +100,23 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
         init {
             naziv = itemView.findViewById(R.id.naziv)
             kolicina = itemView.findViewById(R.id.kolicina)
+            kolicina.setText(R.string.kolicina)
             editKolicina = itemView.findViewById(R.id.editKolicina)
             broj = itemView.findViewById(R.id.broj)
+            broj.setText(R.string.broj)
             editBroj = itemView.findViewById(R.id.editBroj)
             inkrement = itemView.findViewById(R.id.inkrement)
+            inkrement.setText(R.string.inkrement)
             editInkrement = itemView.findViewById(R.id.editInkrement)
             pocetak = itemView.findViewById(R.id.pocetak)
+            pocetak.setText(R.string.pocetak)
             editPocetak = itemView.findViewById(R.id.editPocetak)
             kraj = itemView.findViewById(R.id.kraj)
+            kraj.setText(R.string.kraj)
             editKraj = itemView.findViewById(R.id.editKraj)
             editMjernaJedinica = itemView.findViewById(R.id.editMJ)
             mjernaJedinica = itemView.findViewById(R.id.mjernaJedinica)
+            mjernaJedinica.setText(R.string.mjernaJedinica)
 
             mOnElementListener = onElementListener
             itemView.setOnClickListener(this)
@@ -125,9 +131,6 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, db : AppD
         this.listaAktivnosti = listaAktivnosti
         this.mOnElementListener = mOnElementListener
         this.tip = tip
-        this.db = db
     }
-
-
 }
 

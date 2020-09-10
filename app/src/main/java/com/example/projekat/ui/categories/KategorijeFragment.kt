@@ -19,8 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class KategorijeFragment(db : AppDatabase) :
-    Fragment(), KategorijeAdapter.OnElementListener, CoroutineScope {
+class KategorijeFragment : Fragment(), KategorijeAdapter.OnElementListener, CoroutineScope {
     private var job: Job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -32,13 +31,14 @@ class KategorijeFragment(db : AppDatabase) :
     }
 
     private lateinit var btn : FloatingActionButton
-    private var db : AppDatabase
-    private var kategorijeList : List<Kategorije>
-
+    private lateinit var db : AppDatabase
+    private lateinit var kategorijeList : List<Kategorije>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+        db = AppDatabase.getInstance(this.context!!)
+        kategorijeList = db.kategorijeDao().getAll()
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -51,29 +51,23 @@ class KategorijeFragment(db : AppDatabase) :
         super.onViewCreated(view, savedInstanceState)
         // RecyclerView node initialized here
 
-
         recyclerView.apply {
             // set a LinearLayoutManager to handle Android
             // RecyclerView behavior
             layoutManager = LinearLayoutManager(activity)
             // set the custom adapter to the RecyclerView
-            adapter = KategorijeAdapter(db, kategorijeList,this@KategorijeFragment)
+            adapter = KategorijeAdapter(kategorijeList,this@KategorijeFragment)
         }
 
         btn = view.findViewById(R.id.floatingActionButton_kategorije)
         btn.setOnClickListener {
             dodajKategoriju()
         }
-
     }
-
-   /* companion object {
-        fun newInstance(): KategorijeFragment = MainActivity.db?.let { KategorijeFragment(it) }
-    }*/
 
     fun dodajKategoriju() {
         val fr = getFragmentManager()?.beginTransaction()
-        fr?.replace(R.id.fragment_container, DodajKategorijuFragment(db))
+        fr?.replace(R.id.fragment_container, DodajKategorijuFragment())
         fr?.addToBackStack(null)
         fr?.commit()
     }
@@ -82,15 +76,9 @@ class KategorijeFragment(db : AppDatabase) :
         var fr = getFragmentManager()?.beginTransaction()
         Log.d(TAG, "onElementClick: " + db.kategorijeDao().getById(position))
         Log.d(TAG, "onElementClick: " + kategorijeList.get(position))
-        fr?.replace(R.id.fragment_container, AktivnostiFragment(kategorijeList.get(position), db, false))
+        fr?.replace(R.id.fragment_container, AktivnostiFragment(kategorijeList.get(position)))
         fr?.addToBackStack(null)
         fr?.commit()
     }
-
-    init {
-        this.db = db
-        this.kategorijeList = db.kategorijeDao().getAll()
-    }
-
 
 }

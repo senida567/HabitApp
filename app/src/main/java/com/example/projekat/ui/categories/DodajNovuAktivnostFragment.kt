@@ -1,10 +1,7 @@
 package com.example.projekat.ui.categories
 
-import android.content.ContentValues
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +17,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.Appendable
+import org.w3c.dom.Text
 import kotlin.coroutines.CoroutineContext
 
 
-class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(), CoroutineScope {
+class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
     private var job: Job = Job()
 
     override val coroutineContext: CoroutineContext
@@ -35,13 +32,14 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
         job.cancel()
     }
 
-    private var db : AppDatabase
+    private lateinit var db : AppDatabase
     private var id_ : Int
     private lateinit var btn : Button
     private lateinit var btnIzbrisi : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        db = AppDatabase.getInstance(this.context!!)
     }
 
     override fun onCreateView(
@@ -58,12 +56,21 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
             db.kategorijeDao().getById(id_).tip
         ))
 
-        view.findViewById<Button>(R.id.izbrisi).text = "NAPUSTI"
+        view.findViewById<TextView>(R.id.naziv).text = getString(R.string.naziv)
+        view.findViewById<TextView>(R.id.inkrement).text = getString(R.string.inkrement)
+        view.findViewById<TextView>(R.id.broj).text = getString(R.string.broj)
+        view.findViewById<TextView>(R.id.kolicina).text = getString(R.string.kolicina)
+        view.findViewById<TextView>(R.id.mjernaJedinica).text = getString(R.string.mjernaJedinica)
+        view.findViewById<TextView>(R.id.pocetak).text = getString(R.string.pocetak)
+        view.findViewById<TextView>(R.id.kraj).text = getString(R.string.kraj)
+
+        view.findViewById<Button>(R.id.izbrisi).text = getString(R.string.button_napusti)
         btnIzbrisi = view.findViewById(R.id.izbrisi)
         btnIzbrisi.setOnClickListener {
             dismiss()
         }
         btn = view.findViewById(R.id.novaAktivnost)
+        btn.setText(R.string.dodaj)
         btn.setOnClickListener {
             provjeriUnos()
         }
@@ -117,7 +124,7 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
             val broj = view?.findViewById<EditText>(R.id.editBroj)?.text.toString()
 
             if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(inkrement) || TextUtils.isEmpty(broj))
-                Toast.makeText(requireActivity(), "Morate unijeti tražene podatke!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), getString(R.string.unos_podataka), Toast.LENGTH_LONG).show()
             else {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
@@ -132,7 +139,7 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
             val mjernaJ = view?.findViewById<EditText>(R.id.editMJ)?.text.toString()
 
             if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(kolicina) || TextUtils.isEmpty(mjernaJ))
-                Toast.makeText(requireActivity(), "Morate unijeti tražene podatke!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), getString(R.string.unos_podataka), Toast.LENGTH_LONG).show()
             else {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
@@ -147,7 +154,7 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
             val kraj = view?.findViewById<EditText>(R.id.editKraj)?.text.toString()
 
             if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(pocetak) || TextUtils.isEmpty(kraj))
-                Toast.makeText(requireActivity(), "Morate unijeti tražene podatke!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), getString(R.string.unos_podataka), Toast.LENGTH_LONG).show()
             else {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
@@ -160,20 +167,13 @@ class DodajNovuAktivnostFragment(db : AppDatabase, id : Int) : DialogFragment(),
 
     fun zavrsi() {
         var fr = getFragmentManager()?.beginTransaction()
-        fr?.replace(
-            R.id.fragment_container, AktivnostiFragment(
-                db.kategorijeDao().getById(id_),
-                db, false
-            )
-        )
+        fr?.replace(R.id.fragment_container, AktivnostiFragment(db.kategorijeDao().getById(id_)))
         fr?.addToBackStack(null)
         fr?.commit()
         dismiss()
     }
 
     init {
-        this.db = db
         this.id_ = id
     }
-
 }

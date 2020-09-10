@@ -1,6 +1,5 @@
 package com.example.projekat.adapter
 
-import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,23 +10,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.projekat.AppDatabase
 import com.example.projekat.R
 import com.example.projekat.entity.Kategorije
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable.cancel
-import kotlinx.coroutines.launch
 
 
-class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOnElementListener: OnElementListener) :
+class KategorijeAdapter(kategorijeLista: List<Kategorije>, mOnElementListener: OnElementListener) :
     RecyclerView.Adapter<KategorijeAdapter.KategorijeViewHolder>() {
 
     private var kategorijeLista: List<Kategorije>
     private var mOnElementListener : OnElementListener
-    private var db : AppDatabase
+    private lateinit var db : AppDatabase
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): KategorijeViewHolder {
+        db = AppDatabase.getInstance(parent.context)
         val view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.kategorije_element, parent, false)
         return KategorijeViewHolder(view, mOnElementListener)
@@ -44,7 +40,8 @@ class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOn
         return kategorijeLista.size
     }
 
-    class KategorijeViewHolder(itemView: View, onElementListener: OnElementListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class KategorijeViewHolder(itemView: View, onElementListener: OnElementListener) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
         var naziv : TextView
         var tip : TextView
         var osobina : TextView
@@ -71,7 +68,6 @@ class KategorijeAdapter(db : AppDatabase, kategorijeLista: List<Kategorije>, mOn
     init {
         this.kategorijeLista = kategorijeLista
         this.mOnElementListener = mOnElementListener
-        this.db = db
     }
 
 

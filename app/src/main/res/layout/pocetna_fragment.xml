@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.home.PocetnaFragment" >
+    tools:context=".ui.home.PocetnaFragment"
+    android:background="@color/design_default_color_surface">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPocetna"
