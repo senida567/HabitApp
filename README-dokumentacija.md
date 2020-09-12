@@ -1,10 +1,10 @@
 # Dokumentacija za Završni Projekat – Habit Tracker aplikacija
 
->*Prirodno-matematički fakultet*
->*Odsjek za matematiku*
->*Predmet: Razvoj mobilnih aplikacija*
->*Smjer: Teorijska kompjuterska nauka*
->*Studenti: Almedina Alibašić 5528/M, Senida Smajlović 5425/M*
+>*Prirodno-matematički fakultet*  
+>*Odsjek za matematiku*  
+>*Predmet: Razvoj mobilnih aplikacija*  
+>*Smjer: Teorijska kompjuterska nauka*  
+>*Studenti: Almedina Alibašić 5528/M, Senida Smajlović 5425/M*  
 >*Profesor: prof.dr. Elmedin Selmanović*
 ---
 
