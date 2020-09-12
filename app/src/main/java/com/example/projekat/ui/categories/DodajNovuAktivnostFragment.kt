@@ -61,8 +61,8 @@ class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
         view.findViewById<TextView>(R.id.broj).text = getString(R.string.broj)
         view.findViewById<TextView>(R.id.kolicina).text = getString(R.string.kolicina)
         view.findViewById<TextView>(R.id.mjernaJedinica).text = getString(R.string.mjernaJedinica)
-        view.findViewById<TextView>(R.id.pocetak).text = getString(R.string.pocetak)
-        view.findViewById<TextView>(R.id.kraj).text = getString(R.string.kraj)
+        //view.findViewById<TextView>(R.id.pocetak).text = getString(R.string.pocetak)
+        //view.findViewById<TextView>(R.id.kraj).text = getString(R.string.kraj)
 
         view.findViewById<Button>(R.id.izbrisi).text = getString(R.string.button_napusti)
         btnIzbrisi = view.findViewById(R.id.izbrisi)
@@ -79,8 +79,8 @@ class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
 
     open fun postaviIzgled(s : String) {
         if(s == "Inkrementalne") {
-            view?.findViewById<TextView>(R.id.mjernaJedinica)?.setVisibility(View.GONE)
-            view?.findViewById<EditText>(R.id.editMJ)?.setVisibility(View.GONE)
+            //view?.findViewById<TextView>(R.id.mjernaJedinica)?.setVisibility(View.GONE)
+            //view?.findViewById<EditText>(R.id.editMJ)?.setVisibility(View.GONE)
             view?.findViewById<EditText>(R.id.editKolicina)?.setVisibility(View.GONE)
             view?.findViewById<TextView>(R.id.kolicina)?.setVisibility(View.GONE)
             view?.findViewById<TextView>(R.id.pocetak)?.setVisibility(View.GONE)
@@ -110,6 +110,11 @@ class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
             view?.findViewById<TextView>(R.id.inkrement)?.setVisibility(View.GONE)
             view?.findViewById<EditText>(R.id.editInkrement)?.setVisibility(View.GONE)
 
+
+            view?.findViewById<TextView>(R.id.pocetak)?.setVisibility(View.GONE)
+            view?.findViewById<EditText>(R.id.editPocetak)?.setVisibility(View.GONE)
+            view?.findViewById<TextView>(R.id.kraj)?.setVisibility(View.GONE)
+            view?.findViewById<EditText>(R.id.editKraj)?.setVisibility(View.GONE)
         }
     }
 
@@ -122,13 +127,16 @@ class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
             val noviIdInkr = db.inkrementalneDao().getLastId()+1
             val inkrement = view?.findViewById<EditText>(R.id.editInkrement)?.text.toString()
             val broj = view?.findViewById<EditText>(R.id.editBroj)?.text.toString()
+            val noviIdMJ = db.mjerneJediniceDao().getLastId()+1
+            val mjernaJ = view?.findViewById<EditText>(R.id.editMJ)?.text.toString()
 
-            if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(inkrement) || TextUtils.isEmpty(broj))
+            if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(inkrement) || TextUtils.isEmpty(broj) || TextUtils.isEmpty(mjernaJ))
                 Toast.makeText(requireActivity(), getString(R.string.unos_podataka), Toast.LENGTH_LONG).show()
             else {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
                     db.inkrementalneDao().insert(Inkrementalne(noviIdInkr, noviIdAktivnosti, inkrement.toInt(), broj.toInt()))
+                    db.mjerneJediniceDao().insert(MjerneJedinice(noviIdMJ, mjernaJ, noviIdAktivnosti))
                     zavrsi()
                 }
             }
@@ -144,21 +152,22 @@ class DodajNovuAktivnostFragment(id : Int) : DialogFragment(), CoroutineScope {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
                     db.kolicinskeDao().insert(Kolicinske(noviIdKol, noviIdAktivnosti, kolicina.toInt()))
-                    db.mjerneJediniceDao().insert(MjerneJedinice(noviIdMJ, naziv, noviIdAktivnosti))
+                    db.mjerneJediniceDao().insert(MjerneJedinice(noviIdMJ, mjernaJ, noviIdAktivnosti))
+                    //Toast.makeText(requireActivity(),), Toast.LENGTH_LONG).show()
                     zavrsi()
                 }
             }
         } else {
             val noviIdVr = db.vremenskeDao().getLastId()+1
-            val pocetak = view?.findViewById<EditText>(R.id.editPocetak)?.text.toString()
-            val kraj = view?.findViewById<EditText>(R.id.editKraj)?.text.toString()
+           // val pocetak = view?.findViewById<EditText>(R.id.editPocetak)?.text.toString()
+          //  val kraj = view?.findViewById<EditText>(R.id.editKraj)?.text.toString()
 
-            if(TextUtils.isEmpty(naziv) || TextUtils.isEmpty(pocetak) || TextUtils.isEmpty(kraj))
+            if(TextUtils.isEmpty(naziv) )//|| TextUtils.isEmpty(pocetak) || TextUtils.isEmpty(kraj))
                 Toast.makeText(requireActivity(), getString(R.string.unos_podataka), Toast.LENGTH_LONG).show()
             else {
                 launch {
                     db.aktivnostiDao().insert(Aktivnosti(noviIdAktivnosti, naziv, id_))
-                    db.vremenskeDao().insert(Vremenske(noviIdVr, noviIdAktivnosti, pocetak, kraj))
+                    db.vremenskeDao().insert(Vremenske(noviIdVr, noviIdAktivnosti, "0", "0"))// pocetak, kraj))
                     zavrsi()
                 }
             }

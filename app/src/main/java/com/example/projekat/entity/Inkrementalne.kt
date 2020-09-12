@@ -27,4 +27,6 @@ data class Inkrementalne (
     @ColumnInfo(name = "broj")
     var broj : Int
 
+
+
 )
