@@ -36,8 +36,8 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, mOnElemen
             Log.d(TAG, "onBindViewHolder: " + db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id))
             holder.editBroj.setText(db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id).broj.toString())
             holder.editInkrement.setText(db.inkrementalneDao().getInkrementalnaByIdAktivnosti(listaAktivnosti.get(position).id).inkrement.toString())
-            holder.mjernaJedinica.setVisibility(View.GONE)
-            holder.editMjernaJedinica.setVisibility(View.GONE)
+           // holder.mjernaJedinica.setVisibility(View.GONE)
+            holder.editMjernaJedinica.setText(db.mjerneJediniceDao().getByIdAktivnosti(listaAktivnosti.get(position).id))//setVisibility(View.GONE)
             holder.editKolicina.setVisibility(View.GONE)
             holder.kolicina.setVisibility(View.GONE)
             holder.pocetak.setVisibility(View.GONE)
@@ -66,8 +66,8 @@ class AktivnostiAdapter(tip : Int, listaAktivnosti : List<Aktivnosti>, mOnElemen
             holder.mjernaJedinica.setVisibility(View.GONE)
             holder.editKolicina.setVisibility(View.GONE)
             holder.kolicina.setVisibility(View.GONE)
-            holder.editPocetak.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).pocetak)
-            holder.editKraj.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).kraj)
+//            holder.editPocetak.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).pocetak)
+ //           holder.editKraj.setText(db.vremenskeDao().getVremenskaByIdAktivnosti(listaAktivnosti.get(position).id).kraj)
         }
     }
 

@@ -48,4 +48,5 @@ interface VremenskeDao {
 
     @Query("UPDATE vremenske SET kraj= :vrijeme WHERE id_aktivnosti = :id")
     fun updateKraj(vrijeme : String, id : Int)
+
 }
